@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: min(90vw, 320px);
+            text-align: center;
+        }
+
+        .button-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3px;
+            margin-top: 16px;
+        }
+
+        .button-grid a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #2563eb 0%, #ef4444 100%);
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .button-grid a:hover {
+            transform: translateY(-2px);
+        }
+
+        .button-grid img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 12px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #22c55e;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #fecaca;
+            min-height: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="gate" class="card">
+        <h1>Passwort geschützt</h1>
+        <p>Gib das Passwort ein, um die Seite zu öffnen.</p>
+        <input id="passwordInput" type="password" placeholder="Passwort" />
+        <button id="unlockButton" type="button">Entriegeln</button>
+        <p id="message" class="message"></p>
+    </div>
+
+    <div id="content" class="card hidden">
+        <h1>Team</h1>
+        <p>Willkommen auf der geschützten Seite.</p>
+        <div class="button-grid">
+
+    
+            <a href="#" onclick="window.open('https://dashboard.botghost.com/dashboard', '_blank')"><img src="https://api.dicebear.com/9.x/thumbs/svg?seed=One" alt="One">Bot web.1</a>
+            <a href="#" onclick="window.open('https://discord.com/developers/applications/1533136700061253785/oauth2', '_blank')"><img src="https://api.dicebear.com/9.x/thumbs/svg?seed=Two" alt="Two">Bot web.2</a>
+            <a href="#" onclick="window.open('https://discord.com/channels/1533134794278436927/1533159982625849444', '_blank')"><img src="https://api.dicebear.com/9.x/thumbs/svg?seed=Three" alt="Three">Discord</a>
+            <a href="#" onclick="window.open('', '_blank')"><img src="https://api.dicebear.com/9.x/thumbs/svg?seed=Four" alt="Four">Comming Soon</a>
+        </div>
+        <a href="index.html" style="color: #fff; text-decoration: underline; display: inline-block; margin-top: 16px;">Zur Startseite</a>
+    </div>
+
+    <script>
+        const correctPassword = '112';
+        const gate = document.getElementById('gate');
+        const content = document.getElementById('content');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockButton = document.getElementById('unlockButton');
+        const message = document.getElementById('message');
+
+        function showContent() {
+            gate.classList.add('hidden');
+            content.classList.remove('hidden');
+        }
+
+        function checkPassword() {
+            if (passwordInput.value === correctPassword) {
+                showContent();
+            } else {
+                message.textContent = 'Falsches Passwort.';
+                passwordInput.value = '';
+            }
+        }
+
+        unlockButton.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        passwordInput.focus();
+    </script>
+</body>
+</html>

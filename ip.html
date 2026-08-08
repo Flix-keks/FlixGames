@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff3b30, #00e5ff, #8b5cf6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: black;
+            color: rgb(0, 255, 255);
+            border: 2px solid rgb(0, 255, 255);
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgb(0, 255, 255);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        button:hover {
+            box-shadow: 0 0 10px cyan, 0 0 40px cyan;
+            transform: scale(1.05);
+        }
+
+        button img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+ 
+    </style>
+</head>
+<body>
+    <a href="index.html" style="position: fixed; top: 20px; left: 20px; padding: 10px 16px; border-radius: 999px; background: linear-gradient(135deg, #ff3b30, #00e5ff); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">Home</a>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; color: rgb(55, 28, 143); font-family: Arial, sans-serif;">
+        <p style="margin: 0; font-size: 20px; text-align: center;">Klicke auf einen Button, um die IP zu öffnen.</p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px;">
+            <button onclick="window.open('supperrr.g-portal.game', '_blank')" style="font-size: 24px; padding: 12px 24px;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc1YuncuxFqyyQKSB4h0Oe68oraZq7PX_qFVTaO_fH8A&s=10" alt="Portal">Ip: Supperrr.g-portal.game</button>
+            <button onclick="window.open('heldeninsel.net', '_blank')" style="font-size: 24px; padding: 12px 24px;"><img src="c:\Users\fynnu\AppData\Local\Packages\Microsoft.ScreenSketch_8wekyb3d8bbwe\TempState\Snips\Screenshot 2026-08-03 172854.png" alt="Helden">Ip: Heldeninsel.net</button>
+            <button onclick="window.open('boocord.com', '_blank')" style="font-size: 24px; padding: 12px 24px;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqARvw8trXW7T3P2YEYaezfA_zhAOUbJgH_BFrbhvYNg&s=10" alt="Boocord">Ip: Boocord.com</button>
+            <button onclick="window.open('https://example.com', '_blank')" style="font-size: 24px; padding: 12px 24px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAkFBMVEX///9kyPDw8PBGqtL08fBcxvC83/D28vBmyvKe1/DF4vBaxe+33vBAqNFJrdU4ptD3/P5bv+fQ7fpStt6Q1vRewup1zvKAw+De6/CC0PDV6PBUxO+65fjn9vzy+f3a7vdqu92WzeWb2vXZ6fDM5fCo2vBWstet4PeK0vCx4veRy+Vqwuaj1Oq12+zE6PmX1vC8+I7nAAAKVElEQVR4nO2da3eqOhCGN0pEoVhtLRVt1Xo79mzb/v9/d4B6AQzIOxmC7cn7Za+1VxfwOMlMZnL788fIyMjIyMjIyMjIyMjIyMjIyOjXaPbQ+Xh7Xmy3236k7Xb4N1y+fz68Dpr+MHUNZu7+uX+fyPfb7f7j8MlKJITwvKkIli8Ps6a/kqrZPIGLwdpt/xuu2+1aWcWgEebPM+frx+JEF+E9Di3rAi6NKbqjzx9ky/nbmS5umU+XppNSBu+vTX96Fb3ut/dHuAPeVboT5TR4uXHIQWeRwosbJ8B3MOXooWmKYs2i1nniizofjHdg7L7fpt+ZP5/7XtQ8I/MR8A6Q3vL2GmvMd8Lz+0OS+W6YMc+nYL8To7ghxlmar93m4EsYveVt9MfBPsP3yMSXMIqXpukiudv7dqqBPvHxxfKCecN8g+cUX9RAFR2MRKLZptpJN1Cfs4GmEEVzQ4BZ3oA18MWaNmXGdT9tQO4emJZopjfu0wb0H/l7YFqefqc6WOhpoSfEkeaWOk+30HadLfQoEWgd4rhpPr9fiw+9QLQ0+tSPbJDQwZcwfuoC/DfnYzQBRmHjHz2AmqKgFHGpHdDXChi5VA2IiyYB46ihFRBroiKpc3te/K+4WURqH4zYgt3mzp2sVquJe7cZBR6Vst6GSuuDkcm+3HHLduyjHLs1dr+IpqwTkRQmhLVbx0h5Rf+33lkUxvqCxkemiVYDFN3eWIJ3hBz3KIzTmkK/mwHsV/oWr4TvwPjl4Yiilmxqnik4VQIU4dgpwTswrgKCGWsYhg+2aQu2K2UTd6X2OzHaGxhRBPzJ1CKTTlRwoyKYXDXgQc6kizIK9rCYy+grfELYqmLAgxnHcEvlzvrXqJcRX3Z1wAixtYMRWb3NrA92QtFD+BLBiKxd8RnshGIEA7bsEEQUjGObTraNXgcMYb5YaF+cspU1BhnA9vVXB4CTSRlxDKdiXO0000YrJBRiQgGMENcNtVMXbaObqnEwLwcN/TyjN3gwE1ABIysGGKEVcBDuwYyC2kYTQrSdcsT9GehmxBfdhBHiCG2n6s4GDYXWmG7CiHCl3dnMweFauQltJ1bZeM75QhFV8yg0UnjFJoyyXXfT++pt3HExo70CE2JVI6ImtMIiE9pOXJX5lhW6hYwO6k4VjQgH+07BlztRfpRqfyJYFfwUdkdrT5yDwd4SRZbp5CuH4q4AcQynUSpGhHOKndyEzt3lZxcNfewQJFQxIhoLI8NICR1X5j68jhTRlvwa5fLoMfEt0wsrFEjl4xm7oOEJqd+1J3DN5p0KOMhM1lcwodUdS61SkL6LUGpxPInqUgk7cI1b+snFRhFr6d+jHdEir5pagKHCEiNZz7ILhynyYoeDjk3JpcVXuIpf4B5LfhrZn8NZYvRi2l6NPepn5K7UnhSPwzyZZ8KdqUVch5rJfP2nKi9yZR9cMkiRDoHgUU2kkAIIj2diz+FIVGISsZERujjhlDKugYNhPKTpSVTiGqUdl0JICol9uJFax9whq7K/l3ZcAiGlYAPnTRTBHbf4Sbg3pUxpw5LmywRfSlrzBs8XUhRc8kXxsEchhIP+DB6TEiQfITjwLFSsLppgEGIFLnly0ULrGN/PQuMFWgcmfVRPOsgbkx7moR0RLdBQJO2FeN37W2imP8hN+nLDJd+0khcE8IF3IjAi5uoXNZhQWEXzG6RuGDVTLCKis76wCsuJ9piwRioWuHIBz5wgCbEpmiamNlI0g6rL0SQD1WmwKV4N5lDfBboayrD7+jd0w95dx123ShaDET1pLMzVZLqhz8MXui0nWURbiNeilKHOL0AA+V2p6K6rLJJSMKE1RcZtD9yuVIyqLUCBlw2lBM1f4JXSK4Dy8dklYIcYKhJCpGrKnBxWXwSm8iYoRSTUaMrUrchHy5tOhEithjccyov3EkBKcp96DRIQ4Xp+qeQTMBeyJ2qvgdL8bDFYkVBabpIA4nNOOSFl4Vy5W+3V1XqhDS++5CRUfHGVSMEACA3btj4fYaVYSFjKrkbY5ySUz+1nRNiOwEqo9t7CJTZnAyqGiaOQyW5WG14jdMY7hbFaSo31w3JC274jbdFTJWT0paWEtrNmcDEHKRAqxcNiQttpuQFPA01Ej4dqY5qSxXwbDg96FkLIOS4tIrQ3Cju6pS9CxqWcuUUBoU2ZQyt/EZJbcOaHckK7M+UiO70IyQ85c/wCwhrK6EiOz1mnka+ZmbCbEKvTcNba2FYFXRNUa+Osl8oJeUaiGUH1Us6atzZCqObNOW+hjRCbt2AMiLoIwbknxvlDbYTY/CG6q7LszZoIwTlgRmeqjRCbx88t01dxNboI0dWJfK5GEyG8c4ZvTZQmQnhNFN+6Nl02RNe18a1N1ESIn5LBtr5UDyFhUwlbiqiJEF8jzLbOWxMhYddMru5NNqLonE+iOx9Jx01IOVyBq1Yjeq5EzHUo0n4Ltngh3YTBbMIpaWsX6zRpzSLte6p7BSaniHvX8P2HjYm4/5B5zUmNIh9Px726rTaR9wEzJon1iryXm3t5W12i78fHz1RoRgpnKuAHDDUhpcNNtOzvUpXS2SZatj8pSvGQId69styj0e+HKh4UxWZE4XXD0SjsetyJoephX1xG9HaT+KQvu7Xe8c6NKp/1xeNO4zOFD5m+7Uz41gjF2acqIEtMzJ4pbLcUNlVcPJrhgE+G2nDuPFObusXwUiznJVMO8s4pv6EZPjuwUCxnXyrPtEn2pJO23MsezXQetGrEuNyTXnQ2FgrIdVYyfI5wVrKV7PDZgXKxnXettCtYupKdpZnynQWtFhTlJ7QwVIQ5z/PGz2RPf0hdVX3e6xHgc/VThLLjPcg7ts/iPVf/8rZDgHAnI1Tah5cAst+ISJ9PlO57Ut+0yQ14cVIGcCf85d410lFQmWfWcEcJ5Z6ZgyT3CCiHw1que6TcFZTowtco+5l67gpSmPgW2bNYHdXls3Xd96RwtaNI3RqkPv9b50WP5LsPRbj6vnbNsSeq+a/Gq+WgNMMLN+vVar0JVbcB1X3Jo9L9hx75SsAUoN4rHn/jHZb/g3tI831R65zbVL12WEm//j7gizuddQHqu9M5dy93+xfeyx0NwzN7oX/h3epRMqUQGCnyRjWkS1eUz/prZeTP6KtonV6M4tfZUkVQU7Z0TbPcKLUuwOlSfws9qpPL++swoyCveGLRIJ9ssDOKBg34LXebYmTvjV5TPTCtwT7TVB8Zm6ogrhtlV+Rx/BqaqvAab6BnzdOMfn/IYEchlpoHMVeUZ1S0Y2S/2+KLFTOeIZUYb5Iv1uytfzakH/scCqTwuu+30//yGnQWaafzOIQhhRg1GuAr6HW/TUH2H58ARjENXoir7vVqvu/fn/tkAlnhrighgvfb7H1SvX4szpR+3FzL2mtMN/r8EdZLazbfP58o/ciUwyfr0phxmThYvrzerm8p12DmJpixYtQE82g2z5uKCO7hx9lOotm68/H2vNhut/1I2+3wb7h8/3z4sYYzMjIyMjIyMjIyMjIyMjIyMjKS6D+pdgZDuPt8TgAAAABJRU5ErkJggg==" alt="Soon">Ip: Comming Soon</button>
+        </div>
+    </div>
+</body>
+</html>

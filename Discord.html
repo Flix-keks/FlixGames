@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            text-align: center;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        button img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prod by FlixGames</h1>
+    <a href="index.html" style="position: fixed; top: 20px; left: 20px; padding: 10px 16px; border-radius: 999px; background: linear-gradient(135deg, #ff3b30, #00e5ff); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">Home</a>
+    <div class="grid">
+        <button type="button" onclick="window.open('https://discord.gg/3DH4FSjR5f', '_blank')">
+            <img src="c:\Users\fynnu\Downloads\axio.png" alt="AxioCraft">
+            AxioCraft
+        </button>
+        <button type="button" onclick="window.open('', '_blank')">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbrDRtdWagGGY5rEu9cQEos4AJy60_3FLLivtyTcduSg&s=10" alt="Comming Soon">
+            Comming Soon
+        </button>
+    </div>
+</body>
+</html>

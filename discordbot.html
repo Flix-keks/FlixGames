@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #4f46e5, #9333ea);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 32px;
+            width: min(90vw, 700px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 2.2rem;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .buttons a {
+            text-decoration: none;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #3b82f6, #ef4444);
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .home-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 10;
+        }
+
+        .buttons a:hover {
+            transform: translateY(-2px);
+        }
+
+        .lock-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .lock-card {
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 28px;
+            width: min(90vw, 420px);
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+        }
+
+        .lock-card input {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .lock-card button {
+            margin-top: 12px;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .feature-list {
+            margin-top: 24px;
+            display: grid;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .feature-list div {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 14px;
+            border-radius: 12px;
+        }
+
+        .ticket-form {
+            margin-top: 24px;
+            display: grid;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .ticket-form input,
+        .ticket-form textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .ticket-form button {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ticket-list {
+            margin-top: 20px;
+            display: grid;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .ticket-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .ticket-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .ticket-actions button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .password-box {
+            margin-top: 20px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .password-box input {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            width: 140px;
+        }
+
+        .password-box button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: #ef4444;
+            color: white;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #3b82f6;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <a class="home-btn" href="index.html">Home</a>
+
+    <div id="lockScreen" class="lock-screen">
+        <div class="lock-card">
+            <h2>Passwort erforderlich</h2>
+            <p>Gib das Passwort ein, um die Seite zu öffnen.</p>
+            <input id="unlockPassword" type="password" placeholder="Passwort" onkeydown="if(event.key==='Enter'){checkPassword();}" />
+            <br>
+            <button onclick="checkPassword()">Entsperren</button>
+        </div>
+    </div>
+
+    <div id="mainContent" class="card hidden">
+        <h1>Discord Bot</h1>
+        <p>Ein moderner Discord-Bot mit hilfreichen Befehlen, Automationen und einer starken Community-Integration.</p>
+
+        <div class="buttons">
+            <a href="https://discord.com" target="_blank">Discord öffnen</a>
+            <a href="https://discord.com/developers/applications" target="_blank">Bot erstellen</a>
+            <a href="https://www.youtube.com" target="_blank">Mehr lernen</a>
+        </div>
+
+        <div class="feature-list">
+            <div>✅ Willkommensnachrichten</div>
+            <div>✅ Moderationsbefehle</div>
+            <div>✅ Musik- und Spielbefehle</div>
+            <div>✅ Automatische Rollenvergabe</div>
+        </div>
+
+        <div id="ticketForm" class="ticket-form" style="display:none;">
+            <input id="ticketName" type="text" placeholder="Dein Name" />
+            <input id="ticketTitle" type="text" placeholder="Ticket Titel" />
+            <textarea id="ticketText" rows="4" placeholder="Beschreibe dein Problem oder Anliegen..."></textarea>
+            <button onclick="addTicket()">Ticket senden</button>
+        </div>
+
+        <div id="ticketList" class="ticket-list"></div>
+    </div>
+
+    <script>
+        let editingTicket = null;
+        let authorized = false;
+
+        function checkPassword() {
+            const password = document.getElementById('unlockPassword').value;
+            if (password === '112') {
+                authorized = true;
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('ticketForm').style.display = 'grid';
+                document.getElementById('unlockPassword').value = '';
+            } else {
+                alert('Falsches Passwort.');
+            }
+        }
+
+        function addTicket() {
+            const name = document.getElementById('ticketName').value.trim();
+            const title = document.getElementById('ticketTitle').value.trim();
+            const text = document.getElementById('ticketText').value.trim();
+
+            if (!name || !title || !text) {
+                alert('Bitte fülle alle Felder aus.');
+                return;
+            }
+
+            const ticketList = document.getElementById('ticketList');
+
+            if (editingTicket) {
+                editingTicket.querySelector('.ticket-title').textContent = title;
+                editingTicket.querySelector('.ticket-author').textContent = `Von: ${name}`;
+                editingTicket.querySelector('.ticket-text').textContent = text;
+                editingTicket = null;
+            } else {
+                const item = document.createElement('div');
+                item.className = 'ticket-item';
+                item.innerHTML = `
+                    <strong class="ticket-title">${title}</strong><br>
+                    <small class="ticket-author">Von: ${name}</small><br>
+                    <span class="ticket-text">${text}</span>
+                    <div class="ticket-actions">
+                        <button class="edit-btn" onclick="editTicket(this.parentElement.parentElement)">Bearbeiten</button>
+                        <button class="delete-btn" onclick="deleteTicket(this.parentElement.parentElement)">Löschen</button>
+                    </div>
+                `;
+                ticketList.prepend(item);
+            }
+
+            document.getElementById('ticketName').value = '';
+            document.getElementById('ticketTitle').value = '';
+            document.getElementById('ticketText').value = '';
+            document.querySelector('.ticket-form button').textContent = 'Ticket senden';
+        }
+
+        function editTicket(item) {
+            if (!authorized) {
+                alert('Bitte erst mit dem Passwort freischalten.');
+                return;
+            }
+            editingTicket = item;
+            document.getElementById('ticketTitle').value = item.querySelector('.ticket-title').textContent;
+            document.getElementById('ticketName').value = item.querySelector('.ticket-author').textContent.replace('Von: ', '');
+            document.getElementById('ticketText').value = item.querySelector('.ticket-text').textContent;
+            document.querySelector('.ticket-form button').textContent = 'Änderungen speichern';
+            document.getElementById('ticketForm').style.display = 'grid';
+        }
+
+        function deleteTicket(item) {
+            if (!authorized) {
+                alert('Bitte erst mit dem Passwort freischalten.');
+                return;
+            }
+            item.remove();
+            if (editingTicket === item) {
+                editingTicket = null;
+                document.querySelector('.ticket-form button').textContent = 'Ticket senden';
+            }
+        }
+    </script>
+</body>
+</html>

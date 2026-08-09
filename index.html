@@ -1,5 +1,10 @@
-        }
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
         .nav {
             display: flex;
             flex-wrap: wrap;
@@ -30,37 +35,6 @@
     </style>
 </head>
 <body>
-    <svg width="680" height="680" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#020617"/>
-<stop offset="100%" stop-color="#0f172a"/>
-</linearGradient>
-<linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#00e5ff"/>
-<stop offset="50%" stop-color="#3b82f6"/>
-<stop offset="100%" stop-color="#8b5cf6"/>
-</linearGradient>
-<linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#00e5ff"/>
-<stop offset="100%" stop-color="#ff3b30"/>
-</linearGradient>
-</defs>
-<rect x="0" y="0" width="680" height="680" fill="url(#bgGrad)"/>
-<g transform="rotate(0 340 340)" opacity="0.5">
-<polygon points="340,90 540,215 540,465 340,590 140,465 140,215" fill="none" stroke="#3b82f6" stroke-width="2"/>
-</g>
-<g transform="rotate(30 340 340)" opacity="0.35">
-<polygon points="340,130 505,232 505,448 340,550 175,448 175,232" fill="none" stroke="#8b5cf6" stroke-width="2"/>
-</g>
-<circle cx="340" cy="340" r="230" fill="none" stroke="url(#ringGrad)" stroke-width="10"/>
-<circle cx="340" cy="340" r="230" fill="#020617" opacity="0.55"/>
-<circle cx="220" cy="200" r="6" fill="#00e5ff"/>
-<circle cx="470" cy="470" r="5" fill="#ff3b30"/>
-<circle cx="500" cy="220" r="4" fill="#8b5cf6"/>
-<circle cx="200" cy="480" r="4" fill="#3b82f6"/>
-<path d="M 370 150 L 265 380 L 330 380 L 300 540 L 450 300 L 375 300 Z" fill="url(#boltGrad)" stroke="#020617" stroke-width="4" stroke-linejoin="round"/>
-</svg>
     <div id="clock" class="clock" aria-live="polite"></div>
     <div id="date" class="date" aria-live="polite"></div>
 

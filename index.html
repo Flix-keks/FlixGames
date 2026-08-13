@@ -105,24 +105,190 @@
             transform: translateY(-3px) scale(1.03);
             box-shadow: 0 0 16px rgba(0,229,255,0.35);
         }
+
+        /* ---------- Login / Auth Styles ---------- */
+
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #3b82f6 0%, #0f172a 45%, #020617 100%);
+        }
+
+        .auth-box {
+            background: rgba(2, 6, 23, 0.85);
+            border: 1px solid rgba(0, 229, 255, 0.45);
+            box-shadow: 0 0 24px rgba(0, 229, 255, 0.2);
+            border-radius: 16px;
+            padding: 32px 28px;
+            width: 90%;
+            max-width: 340px;
+        }
+
+        .auth-box h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #ff3b30, #00e5ff, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .auth-box p.sub {
+            margin: 0 0 20px 0;
+            font-size: 0.85rem;
+            color: #9fb4c7;
+        }
+
+        .auth-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .auth-box input::placeholder {
+            color: #7f93a6;
+        }
+
+        .auth-box input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+        }
+
+        .auth-box button {
+            width: 100%;
+            padding: 12px 14px;
+            border: none;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+            transition: transform 0.2s ease;
+        }
+
+        .auth-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #9fb4c7;
+        }
+
+        .auth-switch a {
+            color: #00e5ff;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-error {
+            min-height: 18px;
+            font-size: 0.8rem;
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        #logoutBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 59, 48, 0.7);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        #logoutBtn:hover {
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            transform: translateY(-2px);
+        }
+
+        #welcomeMsg {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            color: #9fb4c7;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
-    <div id="clock" class="clock" aria-live="polite"></div>
-    <div id="date" class="date" aria-live="polite"></div>
 
-    <h1>Prod by FlixGames</h1>
+    <!-- ================= LOGIN / REGISTER OVERLAY ================= -->
+    <div id="authOverlay">
+        <div class="auth-box">
+            <h2 id="authTitle">Anmelden</h2>
+            <p class="sub" id="authSub">Melde dich an, um FlixGames.net zu betreten</p>
 
-    <div class="nav">
-        <a href="index.html">Home</a>
-        <a href="MinecraftHelden.html">Minecraft Helden youtuber</a>
-        <a href="Discord.html">discord</a>
-        <a href="ip.html">ip</a>
-        <a href=".html">Comming Soon</a>
-        </a>
+            <div class="auth-error" id="authError"></div>
+
+            <input type="text" id="authUsername" placeholder="Benutzername" autocomplete="username">
+            <input type="password" id="authPassword" placeholder="Passwort" autocomplete="current-password">
+
+            <button id="authSubmitBtn">Anmelden</button>
+
+            <div class="auth-switch">
+                <span id="authSwitchText">Noch kein Konto?</span>
+                <a id="authSwitchLink">Registrieren</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= HAUPTINHALT (erst nach Login sichtbar) ================= -->
+    <div id="mainContent">
+        <div id="clock" class="clock" aria-live="polite"></div>
+        <div id="date" class="date" aria-live="polite"></div>
+
+        <h1>Prod by FlixGames</h1>
+
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="MinecraftHelden.html">Minecraft Helden youtuber</a>
+            <a href="Discord.html">discord</a>
+            <a href="ip.html">ip</a>
+            <a href=".html">Comming Soon</a>
+        </div>
+
+        <div id="welcomeMsg"></div>
+        <button id="logoutBtn">Abmelden</button>
     </div>
 
     <script>
+        /* ============================================================
+           Uhr / Datum
+           ============================================================ */
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
 
@@ -148,8 +314,154 @@
             dateEl.textContent = formatterDate.format(now);
         }
 
-        updateClock();
-        setInterval(updateClock, 1000);
+        /* ============================================================
+           Login / Registrierung (localStorage-basiert)
+
+           Hinweis: Das ist rein clientseitig gespeichert (Browser-
+           localStorage). Für eine echte Fan-/Gaming-Seite ohne
+           sensible Daten ausreichend, aber KEIN Ersatz für eine
+           serverseitige Authentifizierung mit Passwort-Hashing.
+           ============================================================ */
+
+        const USERS_KEY = 'flixgames_users';        // { username: password }
+        const SESSION_KEY = 'flixgames_loggedInUser'; // aktuell eingeloggter User
+
+        const authOverlay   = document.getElementById('authOverlay');
+        const mainContent   = document.getElementById('mainContent');
+        const authTitle     = document.getElementById('authTitle');
+        const authSub       = document.getElementById('authSub');
+        const authError     = document.getElementById('authError');
+        const usernameInput = document.getElementById('authUsername');
+        const passwordInput = document.getElementById('authPassword');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const authSwitchText = document.getElementById('authSwitchText');
+        const authSwitchLink = document.getElementById('authSwitchLink');
+        const logoutBtn     = document.getElementById('logoutBtn');
+        const welcomeMsg    = document.getElementById('welcomeMsg');
+
+        let mode = 'login'; // 'login' oder 'register'
+
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(USERS_KEY)) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+
+        function showError(msg) {
+            authError.textContent = msg;
+        }
+
+        function clearError() {
+            authError.textContent = '';
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            clearError();
+            usernameInput.value = '';
+            passwordInput.value = '';
+
+            if (mode === 'login') {
+                authTitle.textContent = 'Anmelden';
+                authSub.textContent = 'Melde dich an, um FlixGames.net zu betreten';
+                authSubmitBtn.textContent = 'Anmelden';
+                authSwitchText.textContent = 'Noch kein Konto?';
+                authSwitchLink.textContent = 'Registrieren';
+            } else {
+                authTitle.textContent = 'Registrieren';
+                authSub.textContent = 'Erstelle ein neues Konto für FlixGames.net';
+                authSubmitBtn.textContent = 'Konto erstellen';
+                authSwitchText.textContent = 'Schon ein Konto?';
+                authSwitchLink.textContent = 'Anmelden';
+            }
+        }
+
+        authSwitchLink.addEventListener('click', () => {
+            setMode(mode === 'login' ? 'register' : 'login');
+        });
+
+        function showApp(username) {
+            authOverlay.style.display = 'none';
+            mainContent.style.display = 'flex';
+            mainContent.style.flexDirection = 'column';
+            mainContent.style.alignItems = 'center';
+            welcomeMsg.textContent = 'Angemeldet als: ' + username;
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function showAuth() {
+            mainContent.style.display = 'none';
+            authOverlay.style.display = 'flex';
+            setMode('login');
+        }
+
+        authSubmitBtn.addEventListener('click', handleSubmit);
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleSubmit();
+        });
+
+        function handleSubmit() {
+            clearError();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                showError('Bitte Benutzername und Passwort eingeben.');
+                return;
+            }
+
+            const users = getUsers();
+
+            if (mode === 'register') {
+                if (users[username]) {
+                    showError('Dieser Benutzername ist bereits vergeben.');
+                    return;
+                }
+                if (password.length < 4) {
+                    showError('Passwort muss mindestens 4 Zeichen lang sein.');
+                    return;
+                }
+                users[username] = password;
+                saveUsers(users);
+                localStorage.setItem(SESSION_KEY, username);
+                showApp(username);
+            } else {
+                if (!users[username] || users[username] !== password) {
+                    showError('Benutzername oder Passwort falsch.');
+                    return;
+                }
+                localStorage.setItem(SESSION_KEY, username);
+                showApp(username);
+            }
+        }
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem(SESSION_KEY);
+            showAuth();
+        });
+
+        /* ============================================================
+           Beim Laden prüfen: ist schon jemand eingeloggt?
+           (Login bleibt über Browser-Neustarts hinweg gespeichert,
+           bis man sich aktiv abmeldet)
+           ============================================================ */
+        (function init() {
+            const loggedInUser = localStorage.getItem(SESSION_KEY);
+            const users = getUsers();
+
+            if (loggedInUser && users[loggedInUser]) {
+                showApp(loggedInUser);
+            } else {
+                showAuth();
+            }
+        })();
     </script>
 </body>
 </html>

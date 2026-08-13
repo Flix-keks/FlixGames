@@ -241,6 +241,175 @@
             z-index: 10;
             color: #9fb4c7;
             font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #welcomeMsg .avatar {
+            font-size: 1.3rem;
+        }
+
+        #profileBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 130px;
+            z-index: 10;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(0, 229, 255, 0.55);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        #profileBtn:hover {
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            transform: translateY(-2px);
+        }
+
+        /* ---------- Profil-Overlay ---------- */
+
+        #profileOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(2, 6, 23, 0.75);
+            backdrop-filter: blur(2px);
+        }
+
+        .profile-box {
+            background: rgba(2, 6, 23, 0.92);
+            border: 1px solid rgba(0, 229, 255, 0.45);
+            box-shadow: 0 0 24px rgba(0, 229, 255, 0.2);
+            border-radius: 16px;
+            padding: 28px 26px;
+            width: 90%;
+            max-width: 360px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .profile-box h2 {
+            margin: 0 0 4px 0;
+            font-size: 1.4rem;
+            background: linear-gradient(90deg, #ff3b30, #00e5ff, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .profile-box p.sub {
+            margin: 0 0 18px 0;
+            font-size: 0.8rem;
+            color: #9fb4c7;
+        }
+
+        .profile-box label {
+            display: block;
+            text-align: left;
+            font-size: 0.78rem;
+            color: #9fb4c7;
+            margin-bottom: 4px;
+            margin-top: 12px;
+        }
+
+        .profile-box input,
+        .profile-box textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-family: Arial, sans-serif;
+            outline: none;
+            resize: none;
+        }
+
+        .profile-box input:focus,
+        .profile-box textarea:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+        }
+
+        .avatar-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .avatar-choice {
+            font-size: 1.3rem;
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .avatar-choice.selected {
+            border-color: #00e5ff;
+            background: rgba(0, 229, 255, 0.18);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .profile-actions button {
+            flex: 1;
+            padding: 11px 12px;
+            border: none;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        #profileSaveBtn {
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+        }
+
+        #profileCancelBtn {
+            color: #e2f7ff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .profile-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        .profile-error {
+            min-height: 16px;
+            font-size: 0.78rem;
+            color: #ff6b6b;
+            margin-top: 10px;
+        }
+
+        .profile-success {
+            min-height: 16px;
+            font-size: 0.78rem;
+            color: #34d399;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -282,7 +451,39 @@
         </div>
 
         <div id="welcomeMsg"></div>
+        <button id="profileBtn">Profil bearbeiten</button>
         <button id="logoutBtn">Abmelden</button>
+    </div>
+
+    <!-- ================= PROFIL BEARBEITEN OVERLAY ================= -->
+    <div id="profileOverlay">
+        <div class="profile-box">
+            <h2>Profil bearbeiten</h2>
+            <p class="sub">Passe deinen Anzeigenamen, Avatar, Bio oder Passwort an</p>
+
+            <label for="profileDisplayName">Anzeigename</label>
+            <input type="text" id="profileDisplayName" placeholder="Anzeigename" maxlength="30">
+
+            <label>Avatar</label>
+            <div class="avatar-picker" id="avatarPicker"></div>
+
+            <label for="profileBio">Bio</label>
+            <textarea id="profileBio" rows="3" maxlength="120" placeholder="Erzähl etwas über dich..."></textarea>
+
+            <label for="profileNewPassword">Neues Passwort (optional)</label>
+            <input type="password" id="profileNewPassword" placeholder="Leer lassen, um es nicht zu ändern" autocomplete="new-password">
+
+            <label for="profileCurrentPassword">Aktuelles Passwort (zum Bestätigen)</label>
+            <input type="password" id="profileCurrentPassword" placeholder="Aktuelles Passwort" autocomplete="current-password">
+
+            <div class="profile-error" id="profileError"></div>
+            <div class="profile-success" id="profileSuccess"></div>
+
+            <div class="profile-actions">
+                <button id="profileCancelBtn">Abbrechen</button>
+                <button id="profileSaveBtn">Speichern</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -323,8 +524,9 @@
            serverseitige Authentifizierung mit Passwort-Hashing.
            ============================================================ */
 
-        const USERS_KEY = 'flixgames_users';        // { username: password }
+        const USERS_KEY = 'flixgames_users';         // { username: { password, displayName, avatar, bio } }
         const SESSION_KEY = 'flixgames_loggedInUser'; // aktuell eingeloggter User
+        const AVATAR_OPTIONS = ['🎮', '👾', '🕹️', '⚡', '🔥', '💎', '🚀', '🐉', '🦊', '🎧'];
 
         const authOverlay   = document.getElementById('authOverlay');
         const mainContent   = document.getElementById('mainContent');
@@ -339,11 +541,32 @@
         const logoutBtn     = document.getElementById('logoutBtn');
         const welcomeMsg    = document.getElementById('welcomeMsg');
 
+        const profileBtn        = document.getElementById('profileBtn');
+        const profileOverlay    = document.getElementById('profileOverlay');
+        const profileDisplayName = document.getElementById('profileDisplayName');
+        const profileBio        = document.getElementById('profileBio');
+        const avatarPicker      = document.getElementById('avatarPicker');
+        const profileNewPassword = document.getElementById('profileNewPassword');
+        const profileCurrentPassword = document.getElementById('profileCurrentPassword');
+        const profileError      = document.getElementById('profileError');
+        const profileSuccess    = document.getElementById('profileSuccess');
+        const profileSaveBtn    = document.getElementById('profileSaveBtn');
+        const profileCancelBtn  = document.getElementById('profileCancelBtn');
+
         let mode = 'login'; // 'login' oder 'register'
+        let selectedAvatar = AVATAR_OPTIONS[0];
+        let currentUsername = null;
 
         function getUsers() {
             try {
-                return JSON.parse(localStorage.getItem(USERS_KEY)) || {};
+                const raw = JSON.parse(localStorage.getItem(USERS_KEY)) || {};
+                // Alte Datensätze (nur Passwort als String) migrieren
+                Object.keys(raw).forEach(u => {
+                    if (typeof raw[u] === 'string') {
+                        raw[u] = { password: raw[u], displayName: u, avatar: AVATAR_OPTIONS[0], bio: '' };
+                    }
+                });
+                return raw;
             } catch (e) {
                 return {};
             }
@@ -387,11 +610,19 @@
         });
 
         function showApp(username) {
+            currentUsername = username;
+            const users = getUsers();
+            const profile = users[username] || {};
+
             authOverlay.style.display = 'none';
             mainContent.style.display = 'flex';
             mainContent.style.flexDirection = 'column';
             mainContent.style.alignItems = 'center';
-            welcomeMsg.textContent = 'Angemeldet als: ' + username;
+
+            const avatar = profile.avatar || AVATAR_OPTIONS[0];
+            const displayName = profile.displayName || username;
+            welcomeMsg.innerHTML = '<span class="avatar">' + avatar + '</span><span>' + displayName + '</span>';
+
             updateClock();
             setInterval(updateClock, 1000);
         }
@@ -428,12 +659,17 @@
                     showError('Passwort muss mindestens 4 Zeichen lang sein.');
                     return;
                 }
-                users[username] = password;
+                users[username] = {
+                    password: password,
+                    displayName: username,
+                    avatar: AVATAR_OPTIONS[0],
+                    bio: ''
+                };
                 saveUsers(users);
                 localStorage.setItem(SESSION_KEY, username);
                 showApp(username);
             } else {
-                if (!users[username] || users[username] !== password) {
+                if (!users[username] || users[username].password !== password) {
                     showError('Benutzername oder Passwort falsch.');
                     return;
                 }
@@ -445,6 +681,99 @@
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem(SESSION_KEY);
             showAuth();
+        });
+
+        /* ============================================================
+           Profil bearbeiten
+           ============================================================ */
+
+        function buildAvatarPicker(selected) {
+            avatarPicker.innerHTML = '';
+            AVATAR_OPTIONS.forEach(emoji => {
+                const span = document.createElement('span');
+                span.className = 'avatar-choice' + (emoji === selected ? ' selected' : '');
+                span.textContent = emoji;
+                span.addEventListener('click', () => {
+                    selectedAvatar = emoji;
+                    buildAvatarPicker(selectedAvatar);
+                });
+                avatarPicker.appendChild(span);
+            });
+        }
+
+        function openProfile() {
+            const users = getUsers();
+            const profile = users[currentUsername] || {};
+
+            profileDisplayName.value = profile.displayName || currentUsername;
+            profileBio.value = profile.bio || '';
+            selectedAvatar = profile.avatar || AVATAR_OPTIONS[0];
+            buildAvatarPicker(selectedAvatar);
+
+            profileNewPassword.value = '';
+            profileCurrentPassword.value = '';
+            profileError.textContent = '';
+            profileSuccess.textContent = '';
+
+            profileOverlay.style.display = 'flex';
+        }
+
+        function closeProfile() {
+            profileOverlay.style.display = 'none';
+        }
+
+        profileBtn.addEventListener('click', openProfile);
+        profileCancelBtn.addEventListener('click', closeProfile);
+
+        profileSaveBtn.addEventListener('click', () => {
+            profileError.textContent = '';
+            profileSuccess.textContent = '';
+
+            const users = getUsers();
+            const profile = users[currentUsername];
+
+            if (!profile) {
+                profileError.textContent = 'Profil konnte nicht gefunden werden.';
+                return;
+            }
+
+            const currentPwd = profileCurrentPassword.value;
+            if (!currentPwd || currentPwd !== profile.password) {
+                profileError.textContent = 'Bitte dein aktuelles Passwort korrekt eingeben, um zu speichern.';
+                return;
+            }
+
+            const newDisplayName = profileDisplayName.value.trim();
+            if (!newDisplayName) {
+                profileError.textContent = 'Anzeigename darf nicht leer sein.';
+                return;
+            }
+
+            const newPassword = profileNewPassword.value;
+            if (newPassword && newPassword.length < 4) {
+                profileError.textContent = 'Neues Passwort muss mindestens 4 Zeichen lang sein.';
+                return;
+            }
+
+            profile.displayName = newDisplayName;
+            profile.avatar = selectedAvatar;
+            profile.bio = profileBio.value.trim();
+            if (newPassword) {
+                profile.password = newPassword;
+            }
+
+            users[currentUsername] = profile;
+            saveUsers(users);
+
+            profileSuccess.textContent = 'Profil gespeichert!';
+            profileNewPassword.value = '';
+            profileCurrentPassword.value = '';
+
+            // Anzeige oben links sofort aktualisieren
+            const avatar = profile.avatar || AVATAR_OPTIONS[0];
+            welcomeMsg.innerHTML = '<span class="avatar">' + avatar + '</span><span>' + profile.displayName + '</span>';
+
+            setTimeout(closeProfile, 900);
         });
 
         /* ============================================================

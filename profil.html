@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KI Assistent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-container {
+      width: 400px;
+      height: 500px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    .user {
+      align-self: flex-end;
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+    .ai {
+      align-self: flex-start;
+      background: #e9ecef;
+      color: #333;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+    .chat-input button {
+      margin-left: 8px;
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .chat-input button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">KI Assistent</div>
+  <div class="chat-messages" id="messages">
+    <div class="message ai">Hallo! Ich bin dein KI-Assistent. Wie kann ich dir helfen?</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Schreibe eine Nachricht..." onkeypress="handleKeyPress(event)">
+    <button onclick="sendMessage()">Senden</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    const inputField = document.getElementById("userInput");
+    const text = inputField.value.trim();
+    if (text === "") return;
+
+    // Benutzernachricht anzeigen
+    addMessage(text, "user");
+    inputField.value = "";
+
+    // Antwort der KI simulieren
+    setTimeout(() => {
+      const response = getAIResponse(text);
+      addMessage(response, "ai");
+    }, 600);
+  }
+
+  function addMessage(text, sender) {
+    const messagesDiv = document.getElementById("messages");
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender);
+    messageDiv.textContent = text;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  }
+
+  // Einfache Antwort-Logik (Beispiel)
+  function getAIResponse(input) {
+    const text = input.toLowerCase();
+    if (text.includes("hallo") || text.includes("hi")) {
+      return "Hallo! Schön, von dir zu hören.";
+    } else if (text.includes("wie gehts") || text.includes("wie geht's")) {
+      return "Mir geht es super, danke der Nachfrage! Und dir?";
+    } else if (text.includes("name")) {
+      return "Ich bin ein einfacher HTML-Chatbot.";
+    } else {
+      return "Das ist eine interessante Frage! Um echte KI-Antworten zu geben, müsstest du mich mit einer API (wie von OpenAI oder Google) verbinden.";
+    }
+  }
+</script>
+
+</body>
+</html>

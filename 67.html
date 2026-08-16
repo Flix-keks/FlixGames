@@ -289,6 +289,54 @@
         }
         .timer-buttons { display: flex; gap: 8px; }
         .timer-buttons button { flex: 1; }
+
+        /* ---- Tic Tac Toe ---- */
+        #tttStatus {
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            color: #e2f7ff;
+            min-height: 1.4em;
+        }
+        .ttt-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 280px;
+            margin: 0 auto 16px;
+        }
+        .ttt-cell {
+            aspect-ratio: 1 / 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+        .ttt-cell:hover:not(.filled) {
+            background: rgba(0, 229, 255, 0.15);
+        }
+        .ttt-cell.filled { cursor: default; }
+        .ttt-cell.x { color: #00e5ff; }
+        .ttt-cell.o { color: #ff3b30; }
+        .ttt-cell.win {
+            background: rgba(139, 92, 246, 0.35);
+            border-color: #8b5cf6;
+        }
+        #tttScore {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: #9fb4c7;
+        }
+        #tttScore b { display: block; font-size: 1.2rem; color: #00e5ff; }
+        #tttScore .score-o b { color: #ff3b30; }
     </style>
 </head>
 <body>
@@ -327,6 +375,11 @@
             <div class="icon">⏱️</div>
             <h3>Stoppuhr &amp; Timer</h3>
             <p>Zeit stoppen oder einen Countdown starten</p>
+        </div>
+        <div class="tool-card" data-tool="ttt">
+            <div class="icon">⭕</div>
+            <h3>Tic Tac Toe</h3>
+            <p>Klassisches 2-Spieler-Spiel, X gegen O</p>
         </div>
     </div>
 
@@ -446,6 +499,27 @@
                 <input type="number" id="countdownInput" value="60" style="margin-bottom:0;">
                 <button class="action" id="countdownStartBtn">Countdown starten</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Tic Tac Toe ============ -->
+    <div class="modal-overlay" id="modal-ttt">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Tic Tac Toe</h2>
+                <button class="modal-close" data-close="ttt">✕</button>
+            </div>
+
+            <div id="tttScore">
+                <div class="score-x">Spieler X<b id="tttScoreX">0</b></div>
+                <div>Unentschieden<b id="tttScoreDraw">0</b></div>
+                <div class="score-o">Spieler O<b id="tttScoreO">0</b></div>
+            </div>
+
+            <div id="tttStatus">Spieler X ist am Zug</div>
+            <div class="ttt-board" id="tttBoard"></div>
+
+            <button class="action secondary" id="tttResetBtn" style="width:100%;">Neues Spiel</button>
         </div>
     </div>
 
@@ -783,6 +857,115 @@
                 timerDisplay.textContent = formatStopwatch(remaining * 1000);
             }, 1000);
         });
+
+        /* ============================================================
+           7) Tic Tac Toe
+           ============================================================ */
+        const TTT_SCORE_KEY = 'flixgames_ttt_score';
+        const tttBoardEl = document.getElementById('tttBoard');
+        const tttStatusEl = document.getElementById('tttStatus');
+        const tttResetBtn = document.getElementById('tttResetBtn');
+        const tttScoreXEl = document.getElementById('tttScoreX');
+        const tttScoreOEl = document.getElementById('tttScoreO');
+        const tttScoreDrawEl = document.getElementById('tttScoreDraw');
+
+        const WIN_LINES = [
+            [0,1,2], [3,4,5], [6,7,8], // Reihen
+            [0,3,6], [1,4,7], [2,5,8], // Spalten
+            [0,4,8], [2,4,6]           // Diagonalen
+        ];
+
+        let tttBoard = Array(9).fill(null);
+        let tttCurrentPlayer = 'X';
+        let tttGameOver = false;
+
+        function loadTttScore() {
+            try {
+                return JSON.parse(localStorage.getItem(TTT_SCORE_KEY)) || { X: 0, O: 0, draw: 0 };
+            } catch (e) {
+                return { X: 0, O: 0, draw: 0 };
+            }
+        }
+
+        function saveTttScore(score) {
+            localStorage.setItem(TTT_SCORE_KEY, JSON.stringify(score));
+        }
+
+        function renderTttScore() {
+            const score = loadTttScore();
+            tttScoreXEl.textContent = score.X;
+            tttScoreOEl.textContent = score.O;
+            tttScoreDrawEl.textContent = score.draw;
+        }
+
+        function buildTttBoard() {
+            tttBoardEl.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'ttt-cell';
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => handleTttMove(i));
+                tttBoardEl.appendChild(cell);
+            }
+        }
+
+        function checkTttWinner() {
+            for (const line of WIN_LINES) {
+                const [a, b, c] = line;
+                if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+                    return { winner: tttBoard[a], line };
+                }
+            }
+            if (tttBoard.every(cell => cell !== null)) {
+                return { winner: 'draw', line: [] };
+            }
+            return null;
+        }
+
+        function handleTttMove(index) {
+            if (tttGameOver || tttBoard[index]) return;
+
+            tttBoard[index] = tttCurrentPlayer;
+            const cells = tttBoardEl.children;
+            cells[index].textContent = tttCurrentPlayer;
+            cells[index].classList.add('filled', tttCurrentPlayer.toLowerCase());
+
+            const result = checkTttWinner();
+
+            if (result) {
+                tttGameOver = true;
+                const score = loadTttScore();
+
+                if (result.winner === 'draw') {
+                    tttStatusEl.textContent = 'Unentschieden!';
+                    score.draw += 1;
+                } else {
+                    tttStatusEl.textContent = 'Spieler ' + result.winner + ' hat gewonnen! 🎉';
+                    score[result.winner] += 1;
+                    result.line.forEach(i => cells[i].classList.add('win'));
+                }
+
+                saveTttScore(score);
+                renderTttScore();
+                return;
+            }
+
+            tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
+            tttStatusEl.textContent = 'Spieler ' + tttCurrentPlayer + ' ist am Zug';
+        }
+
+        function resetTttGame() {
+            tttBoard = Array(9).fill(null);
+            tttCurrentPlayer = 'X';
+            tttGameOver = false;
+            tttStatusEl.textContent = 'Spieler X ist am Zug';
+            buildTttBoard();
+        }
+
+        tttResetBtn.addEventListener('click', resetTttGame);
+
+        buildTttBoard();
+        renderTttScore();
     </script>
 </body>
 </html>

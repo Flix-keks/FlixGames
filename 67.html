@@ -3,594 +3,785 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="description" content="FlixGames.net Tools">
+    <title>FlixGames.net - Tools</title>
+
     <style>
+        * { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #850294, #378dff, #00e5ff);
+            background: radial-gradient(circle at top, #3b82f6 0%, #0f172a 45%, #020617 100%);
             color: white;
-            box-sizing: border-box;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            width: min(1000px, 100%);
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            padding: 10px 12px;
-            border: none;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #00ff59, #0dff92, #77acf7);
-            color: #fff;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        .heart-toggle {
-            margin-left: auto;
-            font-size: 1rem;
-            color: #ff4d4d;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.2s ease;
-        }
-
-        .heart-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .heart-icon {
-            margin-left: 6px;
-            font-size: 1rem;
-            color: #ff4d4d;
-            text-shadow: 0 0 8px rgba(255,77,77,0.8);
-        }
-
-        .heart-icon.hidden {
-            display: none;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-        }
-
-        .avatar {
-            position: relative;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            overflow: hidden;
-            background: linear-gradient(135deg, #5b6b7a, #8a9aa9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .avatar::before {
-            content: attr(data-initial);
-        }
-
-        .avatar img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .avatar img.broken {
-            display: none;
+            font-family: Arial, sans-serif;
+            padding: 40px 16px 80px;
         }
 
         h1 {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            margin: 0;
-            font-size: 2rem;
-            color: #00e5ff;
-            text-shadow: 0 0 12px rgba(0,229,255,0.5);
+            text-align: center;
+            margin: 0 0 8px 0;
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ff3b30, #00e5ff, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
         }
 
-        /* --- Neuestes Video --- */
-        .latest-video {
+        .subtitle {
+            text-align: center;
+            color: #9fb4c7;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00e5ff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .tool-card {
+            background: rgba(2, 6, 23, 0.65);
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            border-radius: 16px;
+            padding: 22px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.1);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: #00e5ff;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .tool-card .icon { font-size: 2.2rem; margin-bottom: 10px; }
+        .tool-card h3 { margin: 0 0 6px 0; font-size: 1.1rem; }
+        .tool-card p { margin: 0; font-size: 0.8rem; color: #9fb4c7; }
+
+        /* ---------- Modal ---------- */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(3px);
+            padding: 16px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-box {
+            background: rgba(2, 6, 23, 0.96);
+            border: 1px solid rgba(0, 229, 255, 0.45);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.25);
+            border-radius: 16px;
+            padding: 26px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            background: linear-gradient(90deg, #ff3b30, #00e5ff, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e2f7ff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .modal-close:hover { background: rgba(255, 59, 48, 0.5); }
+
+        /* form elements shared */
+        input, select, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-family: Arial, sans-serif;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+        }
+
+        label {
+            display: block;
+            font-size: 0.78rem;
+            color: #9fb4c7;
+            margin-bottom: 4px;
+        }
+
+        button.action {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        button.action:hover { transform: translateY(-2px); }
+
+        button.secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* ---- Rechner ---- */
+        #calcDisplay {
+            text-align: right;
+            font-size: 1.6rem;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            min-height: 1.6rem;
+            word-break: break-all;
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .calc-grid button {
+            padding: 14px 0;
+            font-size: 1rem;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+        }
+        .calc-grid button:hover { background: rgba(0, 229, 255, 0.2); }
+        .calc-grid button.op { color: #00e5ff; }
+        .calc-grid button.eq {
+            background: linear-gradient(135deg, #ff3b30, #00e5ff);
+            grid-column: span 2;
+        }
+
+        /* ---- Notizen ---- */
+        #notesList {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .note-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .note-item span {
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .note-delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* ---- Passwort-Generator ---- */
+        #pwResult {
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            word-break: break-all;
+            letter-spacing: 1px;
+        }
+        .pw-options label {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 10px;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.25);
-            color: #fff;
-            text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: background 0.2s ease;
+            font-size: 0.85rem;
+            color: #e2f7ff;
+            margin-bottom: 8px;
         }
+        .pw-options input[type="checkbox"] { width: auto; margin: 0; }
+        .pw-options input[type="range"] { margin-bottom: 4px; }
 
-        .latest-video:hover {
-            background: rgba(0,0,0,0.4);
+        /* ---- Zähler ---- */
+        #counterStats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #9fb4c7;
         }
+        #counterStats b { color: #00e5ff; font-size: 1.1rem; display: block; }
 
-        .latest-video .video-thumb {
-            width: 44px;
-            height: 25px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0;
-            display: none;
-            background: rgba(255,255,255,0.1);
+        /* ---- Timer ---- */
+        #timerDisplay {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: bold;
+            margin: 10px 0 16px;
+            color: #00e5ff;
         }
-
-        .latest-video .video-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            opacity: 0.9;
-        }
-
-        .latest-video.loading .video-title {
-            opacity: 0.6;
-        }
-
-        .latest-video.error {
-            pointer-events: none;
-            opacity: 0.6;
-        }
+        .timer-buttons { display: flex; gap: 8px; }
+        .timer-buttons button { flex: 1; }
     </style>
 </head>
 <body>
-    <h1>Prod by FlixGames</h1>
-    <a href="index.html" style="position: fixed; top: 20px; left: 20px; padding: 10px 16px; border-radius: 999px; background: linear-gradient(135deg, #ff3b30, #00e5ff); color: #fff; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">Home</a>
+
+    <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+    <h1>FlixGames Tools</h1>
+    <p class="subtitle">Kleine Helfer, direkt im Browser - alles wird gespeichert, nichts geht verloren</p>
+
     <div class="grid">
-        <div class="card" data-yt-type="handle" data-yt-value="Alphastein">
-            <button type="button" onclick="window.open('https://www.youtube.com/@Alphastein', '_blank')">
-                <span class="avatar" data-initial="A"><img src="https://yt3.googleusercontent.com/Axqiz93CsydZ4iFk-4PZ80_BU4kDlvVbSpUiUF1azlbxl13vgSWKYBaZe8V_K08vpP5r4BKnC1Y=s160-c-k-c0x00ffffff-no-rj" alt="Alphastein" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Alphastein
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="calc">
+            <div class="icon">🧮</div>
+            <h3>Taschenrechner</h3>
+            <p>Grundrechenarten schnell im Kopf... äh, im Browser</p>
         </div>
-        <div class="card" data-yt-type="handle" data-yt-value="craftmir">
-            <button type="button" onclick="window.open('https://youtube.com/@craftmir?si=nRWNBR7qw0ZIgc6w', '_blank')">
-                <span class="avatar" data-initial="A"><img src="https://yt3.googleusercontent.com/e7Nn9vyQHColL-OhEyW8ONBs6XGYJWFpZ6ZhhUqY7V34QdbThe5qymGbnR6deZE6O44D-bwS=s160-c-k-c0x00ffffff-no-rj" alt="Amir" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Amir
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="convert">
+            <div class="icon">📐</div>
+            <h3>Einheiten-Umrechner</h3>
+            <p>Länge, Gewicht und Temperatur umrechnen</p>
         </div>
-        <div class="card" data-yt-type="handle" data-yt-value="AviveHD">
-            <button type="button" onclick="window.open('https://www.youtube.com/@AviveHD', '_blank')">
-                <span class="avatar" data-initial="A"><img src="https://yt3.ggpht.com/eiHpSHCiW-YWP97zzn423TEA75k5z_0qPIRzbefCQJODxEhvC3l3biSrtDbxGi1GH3vfnMCZaus=s68-c-k-c0x00ffffff-no-rj" alt="AviveHD" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                AviveHD
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="notes">
+            <div class="icon">📝</div>
+            <h3>Notizen</h3>
+            <p>Schnelle Notizen, bleiben dauerhaft gespeichert</p>
         </div>
-        <div class="card" data-yt-type="handle" data-yt-value="Elinski">
-            <button type="button" onclick="window.open('https://www.youtube.com/@Elinski', '_blank')">
-                <span class="avatar" data-initial="A"><img src="https://yt3.googleusercontent.com/ytc/AIdro_nuuwzcEMBAX3JyfU5vu8bMvxN9dzGTYL-dcwgRhh-_21E=s160-c-k-c0x00ffffff-no-rj" alt="AwesomeElina" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                AwesomeElina
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="password">
+            <div class="icon">🔑</div>
+            <h3>Passwort-Generator</h3>
+            <p>Sichere, zufällige Passwörter erstellen</p>
         </div>
-        <div class="card" data-yt-type="handle" data-yt-value="blackchecktv">
-            <button type="button" onclick="window.open('https://www.youtube.com/@blackchecktv', '_blank')">
-                <span class="avatar" data-initial="B"><img src="https://yt3.googleusercontent.com/Fgz7UJUmzB5c7XLXX4o81jhsfvNCEW2D_Pcg0DycQC9j09SiXEEm0hCtwh90Eb0AWU9Dt6sK=s160-c-k-c0x00ffffff-no-rj" alt="BlackCheck" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                BlackCheck
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="counter">
+            <div class="icon">🔤</div>
+            <h3>Zeichen/Wörter zählen</h3>
+            <p>Text einfügen, Zeichen &amp; Wörter zählen lassen</p>
         </div>
-        <div class="card" data-yt-type="handle" data-yt-value="BrostasticTV">
-            <button type="button" onclick="window.open('https://www.youtube.com/@BrostasticTV', '_blank')">
-                <span class="avatar" data-initial="B"><img src="https://yt3.googleusercontent.com/NFwHpWPSrQXSvmEKzCKUKuVkLpR74nGkkcU8OsA3GaOULrTQnl-dVyn-q5iCDYtPVaqbLQXl=s160-c-k-c0x00ffffff-no-rj" alt="Brostastic" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Brostastic
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="DanergyyHD">
-            <button type="button" onclick="window.open('https://www.youtube.com/@DanergyyHD', '_blank')">
-                <span class="avatar" data-initial="D"><img src="https://yt3.googleusercontent.com/tTl91DWk_kZEQUOcJKW1ZxcpEcpbJjhTKpmz9biRDS9KycnfLsPL1XusJX_2E_prkARLLBt3_g4=s160-c-k-c0x00ffffff-no-rj" alt="DanergyyHD" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                DanergyyHD
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="id" data-yt-value="UCUxYF--pUjEXxLQAqQZuphg">
-            <button type="button" onclick="window.open('https://www.youtube.com/channel/UCUxYF--pUjEXxLQAqQZuphg', '_blank')">
-                <span class="avatar" data-initial="E"><img src="https://yt3.googleusercontent.com/ytc/AIdro_l4vj3w5DdkaWhml_G-KzHzALuU25FPZ9yP5YkqlEjVrQ=s160-c-k-c0x00ffffff-no-rj" alt="Eiti" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Eiti
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="Ente">
-            <button type="button" onclick="window.open('https://www.youtube.com/@Ente', '_blank')">
-                <span class="avatar" data-initial="E"><img src="https://yt3.googleusercontent.com/tmTqq1RZ6rNMuOi-AnOukpqB94CVu7YVf7jgS59eUDIVwzG921NPsp3Kl7Ng-V8CNSs3u7Nx23E=s160-c-k-c0x00ffffff-no-rj" alt="Ente" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Ente
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="username" data-yt-value="GommeHD">
-            <button type="button" onclick="window.open('https://www.youtube.com/user/GommeHD', '_blank')">
-                <span class="avatar" data-initial="G"><img src="https://yt3.googleusercontent.com/ytc/AIdro_mEKREHy1OJjTVHmbLZj0K5hjS-bnzzQJRSz5_fV1xETU4=s160-c-k-c0x00ffffff-no-rj" alt="GommeHD" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                GommeHD
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="Harotte">
-            <button type="button" onclick="window.open('https://www.youtube.com/@Harotte', '_blank')">
-                <span class="avatar" data-initial="H"><img src="https://yt3.googleusercontent.com/CHSqTvWi7YYZpPZSL2YzV7os4rPoKKYnjH3R0u_FDMGp7aTfqEJw3Tyghhq0BpwEzQnVKiSU=s160-c-k-c0x00ffffff-no-rj" alt="Harotte" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Harotte
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="iCrimax">
-            <button type="button" onclick="window.open('https://www.youtube.com/@iCrimax', '_blank')">
-                <span class="avatar" data-initial="I"><img src="https://yt3.googleusercontent.com/ytc/AIdro_k2IrEeYOP1Y6t1sxAqoQfT2E0Z2qsJT6xwGyPKs5R0XiE=s160-c-k-c0x00ffffff-no-rj" alt="ICrimax" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                ICrimax
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="JoGamesYT">
-            <button type="button" onclick="window.open('https://www.youtube.com/@JoGamesYT', '_blank')">
-                <span class="avatar" data-initial="J"><img src="https://yt3.googleusercontent.com/b7a7jQkb4HagRvcOv-tmSugqlI_tqWHnnJeWzFcxyrOCnXw0sRuNP9sfFhpXGjx6DNA2sRclW10=s160-c-k-c0x00ffffff-no-rj" alt="JoGames" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                JoGames
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="kentrecote">
-            <button type="button" onclick="window.open('https://www.youtube.com/@kentrecote', '_blank')">
-                <span class="avatar" data-initial="K"><img src="https://yt3.googleusercontent.com/stheJ_VjC6mwwuHj27juu_gETmfKFElClh8-RwqOZBXpQqYAyL4pqO3-OBCoP_kGaBIEWVtF9EY=s160-c-k-c0x00ffffff-no-rj" alt="Ken" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Ken
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="kiyanesh">
-            <button type="button" onclick="window.open('https://www.youtube.com/@kiyanesh', '_blank')">
-                <span class="avatar" data-initial="K"><img src="https://yt3.googleusercontent.com/Q8o2q9OjvuJ2-N60FfKhyWl0ZnPO3mx8vucWEyYjxhqZ4vfLWzdTfv8VW-JSfZY28uXu7UUk2A=s160-c-k-c0x00ffffff-no-rj" alt="Kiyanesh" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Kiyanesh
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="KrustiBurger">
-            <button type="button" onclick="window.open('https://www.youtube.com/@KrustiBurger', '_blank')">
-                <span class="avatar" data-initial="K"><img src="https://yt3.googleusercontent.com/SCGSLt4FmVusrbjvQtNL1AgBu2iHZFCi5eftPqr9iguWFTbfFCCB-UF0MIt5skByl7lb_0Bgy8Q=s160-c-k-c0x00ffffff-no-rj" alt="Krusti" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Krusti
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="LiveLuc">
-            <button type="button" onclick="window.open('https://www.youtube.com/@LiveLuc', '_blank')">
-                <span class="avatar" data-initial="L"><img src="https://yt3.googleusercontent.com/8MTTtahRhI4T6TWjfvc8jf-6A4sAp8pHU0ttMl1sdZudHIA_TRLzeB-FeT8yG8JvGMIm4nwNsA=s160-c-k-c0x00ffffff-no-rj" alt="LiveLuc" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                LiveLuc
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="ojichristosTV">
-            <button type="button" onclick="window.open('https://www.youtube.com/@ojichristosTV', '_blank')">
-                <span class="avatar" data-initial="O"><img src="https://yt3.googleusercontent.com/3BVSiqWEl8nvtt7HtbCFzQQtZHjlkOJSwZ7m_kjbMA-5EFDtCXdsFOaol9_qz_B8tSxCU2X1=s160-c-k-c0x00ffffff-no-rj" alt="Ojichristos" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Ojichristos
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="platin6">
-            <button type="button" onclick="window.open('https://www.youtube.com/@platin6', '_blank')">
-                <span class="avatar" data-initial="P"><img src="https://yt3.ggpht.com/fCnuf6zKb7L7S1yTs53HClqUCbXNumBtUeVJlk0LdduFA_0jWDDyQwMFE-N7qpznQmv-izgNsB4=s176-c-k-c0x00ffffff-no-rj-mo" alt="Platin" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Platin
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="id" data-yt-value="UCJubjtE-Jt7p2levpGUWpog">
-            <button type="button" onclick="window.open('https://www.youtube.com/channel/UCJubjtE-Jt7p2levpGUWpog', '_blank')">
-                <span class="avatar" data-initial="R"><img src="https://yt3.googleusercontent.com/ytc/AIdro_n4pF5qwvbIddBbFO-ZyZmOS-qvWbad9pBVoVrc4-MbHRM=s160-c-k-c0x00ffffff-no-rj" alt="Ryan Cole" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Ryan Cole
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="ryney">
-            <button type="button" onclick="window.open('https://www.youtube.com/@ryney', '_blank')">
-                <span class="avatar" data-initial="R"><img src="https://yt3.googleusercontent.com/NpHDQoxzcIFDPGFJbpx3t2wPsh6Prjv6IBYPeV4iVFAyF16w_1Pf5mPVQo5O6GWt1SI91Wq7Wg=s160-c-k-c0x00ffffff-no-rj" alt="Ryney" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Ryney
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="schmockyyyMC">
-            <button type="button" onclick="window.open('https://www.youtube.com/@schmockyyyMC', '_blank')">
-                <span class="avatar" data-initial="S"><img src="https://yt3.googleusercontent.com/y2x7eNHYLR_6AK8dbcUwAPZt8m31ZW8D9AN6WJPzzRupLl2ALjhfHDg2GXkl5fwCSEJGKJQp=s160-c-k-c0x00ffffff-no-rj" alt="SchmockyyyMC" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                SchmockyyyMC
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="SYou">
-            <button type="button" onclick="window.open('https://www.youtube.com/@SYou', '_blank')">
-                <span class="avatar" data-initial="S"><img src="https://yt3.googleusercontent.com/ytc/AIdro_lwhyE88NXJ7IIBeXXBq7bWyIwYzMJVKdQvUDgncf6Vtg=s160-c-k-c0x00ffffff-no-rj" alt="Syou" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Syou
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="TriDanReal">
-            <button type="button" onclick="window.open('https://www.youtube.com/@TriDanReal', '_blank')">
-                <span class="avatar" data-initial="T"><img src="https://yt3.ggpht.com/ZYQo1bDfjwAjAb6y_QydJG18GsSvIGLEdIwT0BqJhLU8Qzz4teX9V2dYusENyTLMQPcATwWwgw=s176-c-k-c0x00ffffff-no-rj-mo" alt="Tridan" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Tridan
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="OfficialYami_">
-            <button type="button" onclick="window.open('https://www.youtube.com/@OfficialYami_', '_blank')">
-                <span class="avatar" data-initial="Y"><img src="https://yt3.googleusercontent.com/UtMxKw-MZZg_pAWFEuyk_nust5_C0454jFdSaNClfEVH_zj3HJkIZt0jmx16XCcfQyX3NSrCbJA=s160-c-k-c0x00ffffff-no-rj" alt="Yami" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Yami
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="xzitachi">
-            <button type="button" onclick="window.open('https://www.youtube.com/@xzitachi', '_blank')">
-                <span class="avatar" data-initial="Z"><img src="https://yt3.ggpht.com/35jEqwqAtPaz08F9xDfHFDlOfr-JtEg0uu2ISxHywVzB_EcXF5yzUDUD_OweQ7dSSLI82aa0=s176-c-k-c0x00ffffff-no-rj-mo" alt="Zitachi" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                Zitachi
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
-        </div>
-        <div class="card" data-yt-type="handle" data-yt-value="zQZack">
-            <button type="button" onclick="window.open('https://www.youtube.com/@zQZack', '_blank')">
-                <span class="avatar" data-initial="Z"><img src="https://yt3.googleusercontent.com/ZomdC6d5u8RdxHRMCiug9uCbvJcSakUxOhNZ1j_hJlf984pumwI1bGZ_T4M3HYHiGJIJRnUn=s160-c-k-c0x00ffffff-no-rj" alt="ZQZack" referrerpolicy="no-referrer" loading="lazy" onerror="this.classList.add('broken')"></span>
-                ZQZack
-            </button>
-            <a class="latest-video loading" href="#" target="_blank" rel="noopener">
-                <img class="video-thumb" alt="">
-                <span class="video-title">Lädt neuestes Video…</span>
-            </a>
+        <div class="tool-card" data-tool="timer">
+            <div class="icon">⏱️</div>
+            <h3>Stoppuhr &amp; Timer</h3>
+            <p>Zeit stoppen oder einen Countdown starten</p>
         </div>
     </div>
+
+    <!-- ============ Modal: Rechner ============ -->
+    <div class="modal-overlay" id="modal-calc">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Taschenrechner</h2>
+                <button class="modal-close" data-close="calc">✕</button>
+            </div>
+            <div id="calcDisplay">0</div>
+            <div class="calc-grid" id="calcGrid"></div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Umrechner ============ -->
+    <div class="modal-overlay" id="modal-convert">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Einheiten-Umrechner</h2>
+                <button class="modal-close" data-close="convert">✕</button>
+            </div>
+
+            <label for="convCategory">Kategorie</label>
+            <select id="convCategory">
+                <option value="length">Länge</option>
+                <option value="weight">Gewicht</option>
+                <option value="temp">Temperatur</option>
+            </select>
+
+            <label for="convInput">Wert</label>
+            <input type="number" id="convInput" value="1">
+
+            <label for="convFrom">Von</label>
+            <select id="convFrom"></select>
+
+            <label for="convTo">Zu</label>
+            <select id="convTo"></select>
+
+            <div id="convResult" style="margin-top:14px; font-size:1.2rem; text-align:center; color:#00e5ff;"></div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Notizen ============ -->
+    <div class="modal-overlay" id="modal-notes">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Notizen</h2>
+                <button class="modal-close" data-close="notes">✕</button>
+            </div>
+
+            <textarea id="noteInput" rows="3" placeholder="Neue Notiz schreiben..."></textarea>
+            <button class="action" id="addNoteBtn">Hinzufügen</button>
+
+            <div id="notesList"></div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Passwort-Generator ============ -->
+    <div class="modal-overlay" id="modal-password">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Passwort-Generator</h2>
+                <button class="modal-close" data-close="password">✕</button>
+            </div>
+
+            <div id="pwResult">••••••••••••</div>
+            <button class="action" id="pwGenerateBtn" style="width:100%; margin-bottom:16px;">Neu generieren</button>
+
+            <div class="pw-options">
+                <label>Länge: <span id="pwLengthLabel">16</span></label>
+                <input type="range" id="pwLength" min="6" max="48" value="16">
+
+                <label><input type="checkbox" id="pwUpper" checked> Großbuchstaben (A-Z)</label>
+                <label><input type="checkbox" id="pwLower" checked> Kleinbuchstaben (a-z)</label>
+                <label><input type="checkbox" id="pwNumbers" checked> Zahlen (0-9)</label>
+                <label><input type="checkbox" id="pwSymbols" checked> Sonderzeichen (!@#...)</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Zähler ============ -->
+    <div class="modal-overlay" id="modal-counter">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Zeichen/Wörter zählen</h2>
+                <button class="modal-close" data-close="counter">✕</button>
+            </div>
+
+            <textarea id="counterInput" rows="6" placeholder="Text hier einfügen..."></textarea>
+
+            <div id="counterStats">
+                <div><b id="statChars">0</b>Zeichen</div>
+                <div><b id="statWords">0</b>Wörter</div>
+                <div><b id="statLines">0</b>Zeilen</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Timer ============ -->
+    <div class="modal-overlay" id="modal-timer">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Stoppuhr &amp; Timer</h2>
+                <button class="modal-close" data-close="timer">✕</button>
+            </div>
+
+            <div id="timerDisplay">00:00.0</div>
+
+            <div class="timer-buttons" style="margin-bottom:12px;">
+                <button class="action" id="timerStartBtn">Start</button>
+                <button class="action secondary" id="timerResetBtn">Reset</button>
+            </div>
+
+            <label for="countdownInput">Oder Countdown (Sekunden)</label>
+            <div style="display:flex; gap:8px;">
+                <input type="number" id="countdownInput" value="60" style="margin-bottom:0;">
+                <button class="action" id="countdownStartBtn">Countdown starten</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ============================================================
-        // WICHTIG: Hier deinen eigenen YouTube Data API v3 Key eintragen.
-        // Kostenlos erstellen unter: https://console.cloud.google.com/
-        //   -> Neues Projekt -> "APIs & Dienste" -> "YouTube Data API v3" aktivieren
-        //   -> "Anmeldedaten" -> "API-Schlüssel erstellen"
-        // Empfehlung: Den Key danach auf deine Domain einschränken
-        // ("HTTP-Referrer-Einschränkungen"), da er im HTML sichtbar ist.
-        // ============================================================
-        const YT_API_KEY = "DEIN_API_KEY_HIER";
-        const CACHE_MINUTES = 60; // wie lange Ergebnisse zwischengespeichert werden
+        /* ============================================================
+           Modal-Handling
+           ============================================================ */
+        function openModal(name) {
+            document.getElementById('modal-' + name).classList.add('active');
+        }
+        function closeModal(name) {
+            document.getElementById('modal-' + name).classList.remove('active');
+        }
 
-        // --- Herz-Toggle (wie vorher) ---
-        document.querySelectorAll('.grid button').forEach((button, index) => {
-            const key = `heart-${index}`;
-
-            const toggle = document.createElement('span');
-            toggle.className = 'heart-toggle';
-            toggle.textContent = '♡';
-            toggle.setAttribute('role', 'button');
-            toggle.setAttribute('tabindex', '0');
-            toggle.setAttribute('aria-label', 'Herz hinzufügen oder entfernen');
-
-            const heart = document.createElement('span');
-            heart.className = 'heart-icon hidden';
-            heart.textContent = '♥';
-
-            const saved = localStorage.getItem(key) === 'true';
-            if (saved) {
-                heart.classList.remove('hidden');
-                toggle.classList.add('active');
-                toggle.textContent = '♥';
-            }
-
-            toggle.addEventListener('click', (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                const active = toggle.classList.toggle('active');
-                heart.classList.toggle('hidden', !active);
-                toggle.textContent = active ? '♥' : '♡';
-                localStorage.setItem(key, String(active));
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('click', () => openModal(card.dataset.tool));
+        });
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
             });
-
-            toggle.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    toggle.click();
-                }
-            });
-
-            button.appendChild(heart);
-            button.appendChild(toggle);
         });
 
-        // --- Neuestes Video pro Kanal laden ---
-        function getCache(key) {
-            try {
-                const raw = localStorage.getItem('ytcache_' + key);
-                if (!raw) return null;
-                const parsed = JSON.parse(raw);
-                if (Date.now() - parsed.time > CACHE_MINUTES * 60 * 1000) return null;
-                return parsed.data;
-            } catch {
-                return null;
-            }
-        }
+        /* ============================================================
+           1) Taschenrechner
+           ============================================================ */
+        const calcDisplay = document.getElementById('calcDisplay');
+        const calcGrid = document.getElementById('calcGrid');
+        const calcButtons = ['7','8','9','/','4','5','6','*','1','2','3','-','0','.','C','+','='];
 
-        function setCache(key, data) {
-            try {
-                localStorage.setItem('ytcache_' + key, JSON.stringify({ time: Date.now(), data }));
-            } catch {}
-        }
+        let calcExpr = '';
 
-        async function resolveUploadsPlaylistId(type, value) {
-            let url;
-            if (type === 'handle') {
-                url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${encodeURIComponent('@' + value)}&key=${YT_API_KEY}`;
-            } else if (type === 'username') {
-                url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forUsername=${encodeURIComponent(value)}&key=${YT_API_KEY}`;
+        calcButtons.forEach(label => {
+            const btn = document.createElement('button');
+            btn.textContent = label;
+            if (['/', '*', '-', '+'].includes(label)) btn.classList.add('op');
+            if (label === '=') btn.classList.add('eq');
+            btn.addEventListener('click', () => handleCalcInput(label));
+            calcGrid.appendChild(btn);
+        });
+
+        function handleCalcInput(label) {
+            if (label === 'C') {
+                calcExpr = '';
+            } else if (label === '=') {
+                try {
+                    // Nur erlaubte Zeichen zulassen (keine beliebige Codeausführung)
+                    if (/^[0-9+\-*/.\s]*$/.test(calcExpr)) {
+                        const result = Function('"use strict"; return (' + calcExpr + ')')();
+                        calcExpr = String(Math.round(result * 100000) / 100000);
+                    } else {
+                        calcExpr = 'Fehler';
+                    }
+                } catch (e) {
+                    calcExpr = 'Fehler';
+                }
             } else {
-                url = `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${encodeURIComponent(value)}&key=${YT_API_KEY}`;
+                if (calcExpr === 'Fehler') calcExpr = '';
+                calcExpr += label;
             }
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.error) throw new Error(data.error.message || 'API-Fehler');
-            if (!data.items || data.items.length === 0) throw new Error('Kanal nicht gefunden');
-            return data.items[0].contentDetails.relatedPlaylists.uploads;
+            calcDisplay.textContent = calcExpr || '0';
         }
 
-        async function fetchLatestVideo(uploadsPlaylistId) {
-            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1&playlistId=${encodeURIComponent(uploadsPlaylistId)}&key=${YT_API_KEY}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.error) throw new Error(data.error.message || 'API-Fehler');
-            if (!data.items || data.items.length === 0) throw new Error('Kein Video gefunden');
-            const snippet = data.items[0].snippet;
-            return {
-                videoId: snippet.resourceId.videoId,
-                title: snippet.title,
-                thumb: (snippet.thumbnails && (snippet.thumbnails.medium || snippet.thumbnails.default) || {}).url || ''
-            };
-        }
-
-        async function loadLatestVideoForCard(card) {
-            const type = card.dataset.ytType;
-            const value = card.dataset.ytValue;
-            const linkEl = card.querySelector('.latest-video');
-            const titleEl = card.querySelector('.video-title');
-            const thumbEl = card.querySelector('.video-thumb');
-            const cacheKey = `${type}:${value}`;
-
-            try {
-                let video = getCache(cacheKey);
-                if (!video) {
-                    const uploadsId = await resolveUploadsPlaylistId(type, value);
-                    video = await fetchLatestVideo(uploadsId);
-                    setCache(cacheKey, video);
-                }
-                titleEl.textContent = video.title;
-                linkEl.title = video.title;
-                if (video.thumb) {
-                    thumbEl.src = video.thumb;
-                    thumbEl.style.display = '';
-                }
-                linkEl.href = `https://www.youtube.com/watch?v=${video.videoId}`;
-                linkEl.classList.remove('loading');
-            } catch (err) {
-                console.warn('Video konnte nicht geladen werden für', value, err);
-                titleEl.textContent = 'Kein Video gefunden';
-                linkEl.classList.remove('loading');
-                linkEl.classList.add('error');
+        /* ============================================================
+           2) Einheiten-Umrechner
+           ============================================================ */
+        const UNIT_DEFS = {
+            length: {
+                label: 'Länge',
+                units: { m: 1, km: 1000, cm: 0.01, mm: 0.001, mile: 1609.34, yard: 0.9144, foot: 0.3048, inch: 0.0254 }
+            },
+            weight: {
+                label: 'Gewicht',
+                units: { kg: 1, g: 0.001, mg: 0.000001, tonne: 1000, pound: 0.453592, ounce: 0.0283495 }
+            },
+            temp: {
+                label: 'Temperatur',
+                units: { celsius: 'C', fahrenheit: 'F', kelvin: 'K' }
             }
+        };
+
+        const convCategory = document.getElementById('convCategory');
+        const convFrom = document.getElementById('convFrom');
+        const convTo = document.getElementById('convTo');
+        const convInput = document.getElementById('convInput');
+        const convResult = document.getElementById('convResult');
+
+        function populateUnitSelects() {
+            const cat = convCategory.value;
+            const units = Object.keys(UNIT_DEFS[cat].units);
+            convFrom.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join('');
+            convTo.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join('');
+            if (units.length > 1) convTo.selectedIndex = 1;
+            runConversion();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!YT_API_KEY || YT_API_KEY === 'DEIN_API_KEY_HIER') {
-                document.querySelectorAll('.video-title').forEach(el => {
-                    el.textContent = 'API-Key fehlt';
-                });
-                document.querySelectorAll('.latest-video').forEach(el => {
-                    el.classList.remove('loading');
-                    el.classList.add('error');
-                });
-                console.warn('Bitte YT_API_KEY im Script-Bereich eintragen.');
+        function convertTemp(value, from, to) {
+            let celsius;
+            if (from === 'celsius') celsius = value;
+            else if (from === 'fahrenheit') celsius = (value - 32) * 5 / 9;
+            else celsius = value - 273.15;
+
+            if (to === 'celsius') return celsius;
+            if (to === 'fahrenheit') return celsius * 9 / 5 + 32;
+            return celsius + 273.15;
+        }
+
+        function runConversion() {
+            const cat = convCategory.value;
+            const value = parseFloat(convInput.value);
+            if (isNaN(value)) {
+                convResult.textContent = '';
                 return;
             }
-            document.querySelectorAll('.card[data-yt-type]').forEach(loadLatestVideoForCard);
+
+            const from = convFrom.value;
+            const to = convTo.value;
+            let result;
+
+            if (cat === 'temp') {
+                result = convertTemp(value, from, to);
+            } else {
+                const units = UNIT_DEFS[cat].units;
+                const baseValue = value * units[from];
+                result = baseValue / units[to];
+            }
+
+            convResult.textContent = value + ' ' + from + ' = ' + (Math.round(result * 10000) / 10000) + ' ' + to;
+        }
+
+        convCategory.addEventListener('change', populateUnitSelects);
+        convFrom.addEventListener('change', runConversion);
+        convTo.addEventListener('change', runConversion);
+        convInput.addEventListener('input', runConversion);
+        populateUnitSelects();
+
+        /* ============================================================
+           3) Notizen (persistiert via localStorage)
+           ============================================================ */
+        const NOTES_KEY = 'flixgames_notes';
+        const noteInput = document.getElementById('noteInput');
+        const notesList = document.getElementById('notesList');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+
+        function loadNotes() {
+            try {
+                return JSON.parse(localStorage.getItem(NOTES_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveNotes(notes) {
+            localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        }
+
+        function renderNotes() {
+            const notes = loadNotes();
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const item = document.createElement('div');
+                item.className = 'note-item';
+                const span = document.createElement('span');
+                span.textContent = note;
+                const delBtn = document.createElement('button');
+                delBtn.className = 'note-delete';
+                delBtn.textContent = '🗑️';
+                delBtn.addEventListener('click', () => {
+                    const updated = loadNotes();
+                    updated.splice(index, 1);
+                    saveNotes(updated);
+                    renderNotes();
+                });
+                item.appendChild(span);
+                item.appendChild(delBtn);
+                notesList.appendChild(item);
+            });
+        }
+
+        addNoteBtn.addEventListener('click', () => {
+            const text = noteInput.value.trim();
+            if (!text) return;
+            const notes = loadNotes();
+            notes.unshift(text);
+            saveNotes(notes);
+            noteInput.value = '';
+            renderNotes();
+        });
+
+        renderNotes();
+
+        /* ============================================================
+           4) Passwort-Generator
+           ============================================================ */
+        const pwResult = document.getElementById('pwResult');
+        const pwLength = document.getElementById('pwLength');
+        const pwLengthLabel = document.getElementById('pwLengthLabel');
+        const pwUpper = document.getElementById('pwUpper');
+        const pwLower = document.getElementById('pwLower');
+        const pwNumbers = document.getElementById('pwNumbers');
+        const pwSymbols = document.getElementById('pwSymbols');
+        const pwGenerateBtn = document.getElementById('pwGenerateBtn');
+
+        const CHAR_SETS = {
+            upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lower: 'abcdefghijklmnopqrstuvwxyz',
+            numbers: '0123456789',
+            symbols: '!@#$%^&*()-_=+[]{}'
+        };
+
+        function generatePassword() {
+            let charset = '';
+            if (pwUpper.checked) charset += CHAR_SETS.upper;
+            if (pwLower.checked) charset += CHAR_SETS.lower;
+            if (pwNumbers.checked) charset += CHAR_SETS.numbers;
+            if (pwSymbols.checked) charset += CHAR_SETS.symbols;
+
+            if (!charset) {
+                pwResult.textContent = 'Mind. eine Option wählen';
+                return;
+            }
+
+            const length = parseInt(pwLength.value, 10);
+            const randomValues = new Uint32Array(length);
+            crypto.getRandomValues(randomValues);
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset[randomValues[i] % charset.length];
+            }
+            pwResult.textContent = password;
+        }
+
+        pwLength.addEventListener('input', () => {
+            pwLengthLabel.textContent = pwLength.value;
+            generatePassword();
+        });
+        [pwUpper, pwLower, pwNumbers, pwSymbols].forEach(el => {
+            el.addEventListener('change', generatePassword);
+        });
+        pwGenerateBtn.addEventListener('click', generatePassword);
+        generatePassword();
+
+        /* ============================================================
+           5) Zeichen/Wörter zählen
+           ============================================================ */
+        const counterInput = document.getElementById('counterInput');
+        const statChars = document.getElementById('statChars');
+        const statWords = document.getElementById('statWords');
+        const statLines = document.getElementById('statLines');
+
+        counterInput.addEventListener('input', () => {
+            const text = counterInput.value;
+            statChars.textContent = text.length;
+            statWords.textContent = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            statLines.textContent = text === '' ? 0 : text.split('\n').length;
+        });
+
+        /* ============================================================
+           6) Stoppuhr & Countdown
+           ============================================================ */
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerStartBtn = document.getElementById('timerStartBtn');
+        const timerResetBtn = document.getElementById('timerResetBtn');
+        const countdownInput = document.getElementById('countdownInput');
+        const countdownStartBtn = document.getElementById('countdownStartBtn');
+
+        let stopwatchInterval = null;
+        let stopwatchStart = 0;
+        let stopwatchElapsed = 0;
+        let stopwatchRunning = false;
+
+        let countdownInterval = null;
+
+        function formatStopwatch(ms) {
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            const tenths = Math.floor((ms % 1000) / 100);
+            return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + '.' + tenths;
+        }
+
+        function updateStopwatchDisplay() {
+            const elapsed = stopwatchElapsed + (stopwatchRunning ? Date.now() - stopwatchStart : 0);
+            timerDisplay.textContent = formatStopwatch(elapsed);
+        }
+
+        timerStartBtn.addEventListener('click', () => {
+            clearInterval(countdownInterval);
+            if (!stopwatchRunning) {
+                stopwatchRunning = true;
+                stopwatchStart = Date.now();
+                stopwatchInterval = setInterval(updateStopwatchDisplay, 100);
+                timerStartBtn.textContent = 'Pause';
+            } else {
+                stopwatchRunning = false;
+                stopwatchElapsed += Date.now() - stopwatchStart;
+                clearInterval(stopwatchInterval);
+                timerStartBtn.textContent = 'Weiter';
+            }
+        });
+
+        timerResetBtn.addEventListener('click', () => {
+            clearInterval(stopwatchInterval);
+            clearInterval(countdownInterval);
+            stopwatchRunning = false;
+            stopwatchElapsed = 0;
+            timerStartBtn.textContent = 'Start';
+            timerDisplay.textContent = '00:00.0';
+            timerDisplay.style.color = '#00e5ff';
+        });
+
+        countdownStartBtn.addEventListener('click', () => {
+            clearInterval(stopwatchInterval);
+            clearInterval(countdownInterval);
+            stopwatchRunning = false;
+            timerStartBtn.textContent = 'Start';
+
+            let remaining = parseInt(countdownInput.value, 10);
+            if (isNaN(remaining) || remaining <= 0) return;
+
+            timerDisplay.style.color = '#00e5ff';
+            timerDisplay.textContent = formatStopwatch(remaining * 1000);
+
+            countdownInterval = setInterval(() => {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    timerDisplay.textContent = '00:00.0';
+                    timerDisplay.style.color = '#ff3b30';
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                timerDisplay.textContent = formatStopwatch(remaining * 1000);
+            }, 1000);
         });
     </script>
 </body>

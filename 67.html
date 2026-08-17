@@ -416,6 +416,129 @@
             0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
         }
+
+        /* ---- Vier Gewinnt ---- */
+        #c4Status {
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            color: #e2f7ff;
+            min-height: 1.4em;
+        }
+        #c4Score {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: #9fb4c7;
+        }
+        #c4Score b { display: block; font-size: 1.2rem; }
+        #c4Score .score-red b { color: #ff3b30; }
+        #c4Score .score-yellow b { color: #facc15; }
+
+        #c4WinBanner {
+            text-align: center;
+            font-size: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: all 0.4s cubic-bezier(.22,1.4,.36,1);
+        }
+        #c4WinBanner.show {
+            font-size: 1rem;
+            max-height: 60px;
+            opacity: 1;
+            transform: translateY(0);
+            margin-bottom: 14px;
+        }
+        #c4WinBanner .banner-inner {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(0, 229, 255, 0.15);
+            border: 1px solid #00e5ff;
+            font-weight: bold;
+            color: #d6f9ff;
+        }
+
+        #c4BoardWrap {
+            position: relative;
+            max-width: 336px;
+            margin: 0 auto 16px;
+        }
+        .c4-board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            background: rgba(2, 6, 23, 0.5);
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+        .c4-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .c4-col:hover .c4-cell.empty {
+            background: rgba(0, 229, 255, 0.12);
+        }
+        .c4-cell {
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            position: relative;
+            transition: background 0.2s ease;
+        }
+        .c4-disc {
+            position: absolute;
+            inset: 8%;
+            border-radius: 50%;
+        }
+        .c4-disc.red {
+            background: radial-gradient(circle at 35% 30%, #ff8a80, #ff3b30 70%);
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+        }
+        .c4-disc.yellow {
+            background: radial-gradient(circle at 35% 30%, #fff3b0, #facc15 70%);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+        }
+
+        @keyframes c4Drop {
+            0%   { transform: translateY(-260px); opacity: 0.6; }
+            65%  { transform: translateY(6px); opacity: 1; }
+            80%  { transform: translateY(-3px); }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .c4-disc.dropping {
+            animation: c4Drop 0.5s cubic-bezier(.4,0,.2,1);
+        }
+
+        @keyframes c4WinPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(52, 211, 153, 0.4); transform: scale(1); }
+            50%      { box-shadow: 0 0 22px rgba(52, 211, 153, 1); transform: scale(1.12); }
+        }
+        .c4-disc.win {
+            animation: c4WinPulse 0.9s ease-in-out infinite;
+            outline: 2px solid #34d399;
+        }
+
+        #c4WinLine {
+            position: absolute;
+            height: 5px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #34d399, #00e5ff);
+            box-shadow: 0 0 14px rgba(52, 211, 153, 0.8);
+            transform-origin: left center;
+            width: 0;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            transition: width 0.4s cubic-bezier(.22,1,.36,1);
+        }
     </style>
 </head>
 <body>
@@ -459,6 +582,11 @@
             <div class="icon">⭕</div>
             <h3>Tic Tac Toe</h3>
             <p>Klassisches 2-Spieler-Spiel, X gegen O</p>
+        </div>
+        <div class="tool-card" data-tool="c4">
+            <div class="icon">🔴</div>
+            <h3>Vier Gewinnt</h3>
+            <p>Steine fallen lassen, 4 in einer Reihe gewinnt</p>
         </div>
     </div>
 
@@ -605,6 +733,33 @@
             </div>
 
             <button class="action secondary" id="tttResetBtn" style="width:100%;">Neues Spiel</button>
+        </div>
+    </div>
+
+    <!-- ============ Modal: Vier Gewinnt ============ -->
+    <div class="modal-overlay" id="modal-c4">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Vier Gewinnt</h2>
+                <button class="modal-close" data-close="c4">✕</button>
+            </div>
+
+            <div id="c4Score">
+                <div class="score-red">Rot<b id="c4ScoreRed">0</b></div>
+                <div>Unentschieden<b id="c4ScoreDraw">0</b></div>
+                <div class="score-yellow">Gelb<b id="c4ScoreYellow">0</b></div>
+            </div>
+
+            <div id="c4WinBanner"><span class="banner-inner" id="c4WinBannerText"></span></div>
+
+            <div id="c4Status">Rot ist am Zug</div>
+
+            <div id="c4BoardWrap">
+                <div class="c4-board" id="c4Board"></div>
+                <div id="c4WinLine"></div>
+            </div>
+
+            <button class="action secondary" id="c4ResetBtn" style="width:100%;">Neues Spiel</button>
         </div>
     </div>
 
@@ -1085,6 +1240,213 @@
 
         tttResetBtn.addEventListener('click', tttResetGame);
         tttBuildBoard();
+
+        /* ============================================================
+           8) Vier Gewinnt (mit Fallen-Animation + Gewinn-Animation)
+           ============================================================ */
+        const C4_COLS = 7;
+        const C4_ROWS = 6;
+
+        const c4BoardEl = document.getElementById('c4Board');
+        const c4BoardWrap = document.getElementById('c4BoardWrap');
+        const c4Status = document.getElementById('c4Status');
+        const c4WinLine = document.getElementById('c4WinLine');
+        const c4ResetBtn = document.getElementById('c4ResetBtn');
+        const c4WinBanner = document.getElementById('c4WinBanner');
+        const c4WinBannerText = document.getElementById('c4WinBannerText');
+        const c4ScoreRedEl = document.getElementById('c4ScoreRed');
+        const c4ScoreYellowEl = document.getElementById('c4ScoreYellow');
+        const c4ScoreDrawEl = document.getElementById('c4ScoreDraw');
+
+        // grid[row][col], row 0 = oberste Reihe
+        let c4Grid = [];
+        let c4CellEls = [];
+        let c4CurrentPlayer = 'red';
+        let c4GameOver = false;
+        let c4Scores = { red: 0, yellow: 0, draw: 0 };
+
+        function c4BuildBoard() {
+            c4Grid = Array.from({ length: C4_ROWS }, () => Array(C4_COLS).fill(null));
+            c4CellEls = Array.from({ length: C4_ROWS }, () => Array(C4_COLS).fill(null));
+            c4BoardEl.innerHTML = '';
+
+            for (let col = 0; col < C4_COLS; col++) {
+                const colEl = document.createElement('div');
+                colEl.className = 'c4-col';
+                colEl.dataset.col = col;
+                colEl.addEventListener('click', () => c4HandleColumnClick(col));
+
+                for (let row = 0; row < C4_ROWS; row++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'c4-cell empty';
+                    colEl.appendChild(cell);
+                    c4CellEls[row][col] = cell;
+                }
+                c4BoardEl.appendChild(colEl);
+            }
+        }
+
+        function c4HandleColumnClick(col) {
+            if (c4GameOver) return;
+
+            // niedrigste freie Reihe in dieser Spalte finden
+            let targetRow = -1;
+            for (let row = C4_ROWS - 1; row >= 0; row--) {
+                if (!c4Grid[row][col]) {
+                    targetRow = row;
+                    break;
+                }
+            }
+            if (targetRow === -1) return; // Spalte voll
+
+            c4Grid[targetRow][col] = c4CurrentPlayer;
+            c4RenderDisc(targetRow, col, c4CurrentPlayer);
+
+            const winResult = c4CheckWinner(targetRow, col);
+            if (winResult) {
+                c4EndGame(winResult);
+                return;
+            }
+
+            if (c4Grid.every(row => row.every(c => c !== null))) {
+                c4EndGame({ draw: true });
+                return;
+            }
+
+            c4CurrentPlayer = c4CurrentPlayer === 'red' ? 'yellow' : 'red';
+            c4Status.textContent = (c4CurrentPlayer === 'red' ? 'Rot' : 'Gelb') + ' ist am Zug';
+        }
+
+        function c4RenderDisc(row, col, player) {
+            const cellEl = c4CellEls[row][col];
+            cellEl.classList.remove('empty');
+            const disc = document.createElement('div');
+            disc.className = 'c4-disc ' + player + ' dropping';
+            cellEl.appendChild(disc);
+        }
+
+        function c4CheckWinner(row, col) {
+            const player = c4Grid[row][col];
+            const directions = [
+                { dr: 0, dc: 1 },  // horizontal
+                { dr: 1, dc: 0 },  // vertikal
+                { dr: 1, dc: 1 },  // Diagonale \
+                { dr: 1, dc: -1 }  // Diagonale /
+            ];
+
+            for (const { dr, dc } of directions) {
+                const line = [[row, col]];
+
+                // in positive Richtung sammeln
+                let r = row + dr, c = col + dc;
+                while (r >= 0 && r < C4_ROWS && c >= 0 && c < C4_COLS && c4Grid[r][c] === player) {
+                    line.push([r, c]);
+                    r += dr; c += dc;
+                }
+                // in negative Richtung sammeln
+                r = row - dr; c = col - dc;
+                while (r >= 0 && r < C4_ROWS && c >= 0 && c < C4_COLS && c4Grid[r][c] === player) {
+                    line.unshift([r, c]);
+                    r -= dr; c -= dc;
+                }
+
+                if (line.length >= 4) {
+                    return { winner: player, line: line.slice(0, Math.max(4, line.length)) };
+                }
+            }
+            return null;
+        }
+
+        function c4EndGame(result) {
+            c4GameOver = true;
+
+            if (result.draw) {
+                c4Status.textContent = 'Unentschieden!';
+                c4Scores.draw++;
+                c4ScoreDrawEl.textContent = c4Scores.draw;
+                c4ShowBanner('🤝 Unentschieden!');
+                return;
+            }
+
+            const { winner, line } = result;
+            const winnerLabel = winner === 'red' ? 'Rot' : 'Gelb';
+            c4Status.textContent = winnerLabel + ' hat gewonnen!';
+            c4Scores[winner]++;
+            (winner === 'red' ? c4ScoreRedEl : c4ScoreYellowEl).textContent = c4Scores[winner];
+
+            line.forEach(([r, c]) => {
+                const disc = c4CellEls[r][c].querySelector('.c4-disc');
+                if (disc) disc.classList.add('win');
+            });
+
+            c4DrawWinLine(line);
+            c4ShowBanner('🎉 ' + winnerLabel + ' gewinnt!');
+            c4LaunchConfetti();
+        }
+
+        function c4DrawWinLine(line) {
+            const [r1, c1] = line[0];
+            const [r2, c2] = line[line.length - 1];
+
+            const cellA = c4CellEls[r1][c1].getBoundingClientRect();
+            const cellB = c4CellEls[r2][c2].getBoundingClientRect();
+            const wrapRect = c4BoardWrap.getBoundingClientRect();
+
+            const x1 = cellA.left + cellA.width / 2 - wrapRect.left;
+            const y1 = cellA.top + cellA.height / 2 - wrapRect.top;
+            const x2 = cellB.left + cellB.width / 2 - wrapRect.left;
+            const y2 = cellB.top + cellB.height / 2 - wrapRect.top;
+
+            const length = Math.hypot(x2 - x1, y2 - y1);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+            c4WinLine.style.top = y1 + 'px';
+            c4WinLine.style.left = x1 + 'px';
+            c4WinLine.style.transform = `rotate(${angle}deg)`;
+            c4WinLine.style.width = '0px';
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    c4WinLine.style.width = length + 'px';
+                });
+            });
+        }
+
+        function c4ShowBanner(text) {
+            c4WinBannerText.textContent = text;
+            c4WinBanner.classList.add('show');
+        }
+
+        function c4HideBanner() {
+            c4WinBanner.classList.remove('show');
+        }
+
+        function c4LaunchConfetti() {
+            const count = 40;
+            for (let i = 0; i < count; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'ttt-confetti';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.background = TTT_CONFETTI_COLORS[Math.floor(Math.random() * TTT_CONFETTI_COLORS.length)];
+                piece.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                piece.style.animationDelay = (Math.random() * 0.3) + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                document.body.appendChild(piece);
+                setTimeout(() => piece.remove(), 4000);
+            }
+        }
+
+        function c4ResetGame() {
+            c4CurrentPlayer = 'red';
+            c4GameOver = false;
+            c4Status.textContent = 'Rot ist am Zug';
+            c4WinLine.style.width = '0px';
+            c4HideBanner();
+            c4BuildBoard();
+        }
+
+        c4ResetBtn.addEventListener('click', c4ResetGame);
+        c4BuildBoard();
     </script>
 </body>
 </html>

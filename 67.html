@@ -136,7 +136,6 @@
 
         .modal-close:hover { background: rgba(255, 59, 48, 0.5); }
 
-        /* form elements shared */
         input, select, textarea {
             width: 100%;
             box-sizing: border-box;
@@ -182,7 +181,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* ---- Rechner ---- */
         #calcDisplay {
             text-align: right;
             font-size: 1.6rem;
@@ -214,7 +212,6 @@
             grid-column: span 2;
         }
 
-        /* ---- Notizen ---- */
         #notesList {
             display: flex;
             flex-direction: column;
@@ -247,7 +244,6 @@
             flex-shrink: 0;
         }
 
-        /* ---- Passwort-Generator ---- */
         #pwResult {
             font-size: 1.1rem;
             text-align: center;
@@ -269,7 +265,6 @@
         .pw-options input[type="checkbox"] { width: auto; margin: 0; }
         .pw-options input[type="range"] { margin-bottom: 4px; }
 
-        /* ---- Zähler ---- */
         #counterStats {
             display: flex;
             justify-content: space-around;
@@ -279,7 +274,6 @@
         }
         #counterStats b { color: #00e5ff; font-size: 1.1rem; display: block; }
 
-        /* ---- Timer ---- */
         #timerDisplay {
             text-align: center;
             font-size: 2.4rem;
@@ -297,13 +291,17 @@
             margin-bottom: 14px;
             color: #e2f7ff;
             min-height: 1.4em;
+            transition: color 0.3s ease;
+        }
+        #tttBoardWrap {
+            position: relative;
+            max-width: 280px;
+            margin: 0 auto 16px;
         }
         .ttt-board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            max-width: 280px;
-            margin: 0 auto 16px;
         }
         .ttt-cell {
             aspect-ratio: 1 / 1;
@@ -317,17 +315,56 @@
             font-weight: bold;
             cursor: pointer;
             user-select: none;
+            position: relative;
+            transition: background 0.2s ease, transform 0.15s ease;
         }
         .ttt-cell:hover:not(.filled) {
             background: rgba(0, 229, 255, 0.15);
+            transform: translateY(-2px);
         }
         .ttt-cell.filled { cursor: default; }
-        .ttt-cell.x { color: #00e5ff; }
-        .ttt-cell.o { color: #ff3b30; }
+        .ttt-cell.x { color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); }
+        .ttt-cell.o { color: #ff3b30; text-shadow: 0 0 10px rgba(255, 59, 48, 0.6); }
+
+        @keyframes tttMarkPop {
+            0%   { transform: scale(0); opacity: 0; }
+            60%  { transform: scale(1.25); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .ttt-cell.just-placed span {
+            display: inline-block;
+            animation: tttMarkPop 0.35s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        @keyframes tttWinPulse {
+            0%, 100% {
+                box-shadow: 0 0 6px rgba(139, 92, 246, 0.4);
+                background: rgba(139, 92, 246, 0.18);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.9);
+                background: rgba(139, 92, 246, 0.4);
+            }
+        }
         .ttt-cell.win {
-            background: rgba(139, 92, 246, 0.35);
+            animation: tttWinPulse 1s ease-in-out infinite;
             border-color: #8b5cf6;
         }
+
+        #tttWinLine {
+            position: absolute;
+            height: 5px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #8b5cf6, #00e5ff);
+            box-shadow: 0 0 14px rgba(139, 92, 246, 0.8);
+            transform-origin: left center;
+            width: 0;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            transition: width 0.4s cubic-bezier(.22,1,.36,1);
+        }
+
         #tttScore {
             display: flex;
             justify-content: space-around;
@@ -337,6 +374,48 @@
         }
         #tttScore b { display: block; font-size: 1.2rem; color: #00e5ff; }
         #tttScore .score-o b { color: #ff3b30; }
+
+        #tttWinBanner {
+            text-align: center;
+            font-size: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: all 0.4s cubic-bezier(.22,1.4,.36,1);
+            margin-bottom: 0;
+        }
+        #tttWinBanner.show {
+            font-size: 1rem;
+            max-height: 60px;
+            opacity: 1;
+            transform: translateY(0);
+            margin-bottom: 14px;
+        }
+        #tttWinBanner .banner-inner {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid #8b5cf6;
+            font-weight: bold;
+            color: #e9d5ff;
+        }
+
+        .ttt-confetti {
+            position: fixed;
+            top: -20px;
+            z-index: 300;
+            width: 8px;
+            height: 12px;
+            pointer-events: none;
+            opacity: 0.95;
+            animation: tttConfettiFall linear forwards;
+        }
+        @keyframes tttConfettiFall {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
@@ -516,17 +595,20 @@
                 <div class="score-o">Spieler O<b id="tttScoreO">0</b></div>
             </div>
 
+            <div id="tttWinBanner"><span class="banner-inner" id="tttWinBannerText"></span></div>
+
             <div id="tttStatus">Spieler X ist am Zug</div>
-            <div class="ttt-board" id="tttBoard"></div>
+
+            <div id="tttBoardWrap">
+                <div class="ttt-board" id="tttBoard"></div>
+                <div id="tttWinLine"></div>
+            </div>
 
             <button class="action secondary" id="tttResetBtn" style="width:100%;">Neues Spiel</button>
         </div>
     </div>
 
     <script>
-        /* ============================================================
-           Modal-Handling
-           ============================================================ */
         function openModal(name) {
             document.getElementById('modal-' + name).classList.add('active');
         }
@@ -546,9 +628,6 @@
             });
         });
 
-        /* ============================================================
-           1) Taschenrechner
-           ============================================================ */
         const calcDisplay = document.getElementById('calcDisplay');
         const calcGrid = document.getElementById('calcGrid');
         const calcButtons = ['7','8','9','/','4','5','6','*','1','2','3','-','0','.','C','+','='];
@@ -569,7 +648,6 @@
                 calcExpr = '';
             } else if (label === '=') {
                 try {
-                    // Nur erlaubte Zeichen zulassen (keine beliebige Codeausführung)
                     if (/^[0-9+\-*/.\s]*$/.test(calcExpr)) {
                         const result = Function('"use strict"; return (' + calcExpr + ')')();
                         calcExpr = String(Math.round(result * 100000) / 100000);
@@ -586,9 +664,6 @@
             calcDisplay.textContent = calcExpr || '0';
         }
 
-        /* ============================================================
-           2) Einheiten-Umrechner
-           ============================================================ */
         const UNIT_DEFS = {
             length: {
                 label: 'Länge',
@@ -659,9 +734,6 @@
         convInput.addEventListener('input', runConversion);
         populateUnitSelects();
 
-        /* ============================================================
-           3) Notizen (persistiert via localStorage)
-           ============================================================ */
         const NOTES_KEY = 'flixgames_notes';
         const noteInput = document.getElementById('noteInput');
         const notesList = document.getElementById('notesList');
@@ -714,9 +786,6 @@
 
         renderNotes();
 
-        /* ============================================================
-           4) Passwort-Generator
-           ============================================================ */
         const pwResult = document.getElementById('pwResult');
         const pwLength = document.getElementById('pwLength');
         const pwLengthLabel = document.getElementById('pwLengthLabel');
@@ -766,9 +835,6 @@
         pwGenerateBtn.addEventListener('click', generatePassword);
         generatePassword();
 
-        /* ============================================================
-           5) Zeichen/Wörter zählen
-           ============================================================ */
         const counterInput = document.getElementById('counterInput');
         const statChars = document.getElementById('statChars');
         const statWords = document.getElementById('statWords');
@@ -781,9 +847,6 @@
             statLines.textContent = text === '' ? 0 : text.split('\n').length;
         });
 
-        /* ============================================================
-           6) Stoppuhr & Countdown
-           ============================================================ */
         const timerDisplay = document.getElementById('timerDisplay');
         const timerStartBtn = document.getElementById('timerStartBtn');
         const timerResetBtn = document.getElementById('timerResetBtn');
@@ -859,113 +922,169 @@
         });
 
         /* ============================================================
-           7) Tic Tac Toe
+           7) Tic Tac Toe (mit Gewinn-Animation)
            ============================================================ */
-        const TTT_SCORE_KEY = 'flixgames_ttt_score';
         const tttBoardEl = document.getElementById('tttBoard');
-        const tttStatusEl = document.getElementById('tttStatus');
+        const tttBoardWrap = document.getElementById('tttBoardWrap');
+        const tttStatus = document.getElementById('tttStatus');
+        const tttWinLine = document.getElementById('tttWinLine');
         const tttResetBtn = document.getElementById('tttResetBtn');
+        const tttWinBanner = document.getElementById('tttWinBanner');
+        const tttWinBannerText = document.getElementById('tttWinBannerText');
         const tttScoreXEl = document.getElementById('tttScoreX');
         const tttScoreOEl = document.getElementById('tttScoreO');
         const tttScoreDrawEl = document.getElementById('tttScoreDraw');
 
-        const WIN_LINES = [
-            [0,1,2], [3,4,5], [6,7,8], // Reihen
-            [0,3,6], [1,4,7], [2,5,8], // Spalten
-            [0,4,8], [2,4,6]           // Diagonalen
+        const TTT_WIN_LINES = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
         ];
 
         let tttBoard = Array(9).fill(null);
         let tttCurrentPlayer = 'X';
         let tttGameOver = false;
+        let tttScores = { X: 0, O: 0, draw: 0 };
 
-        function loadTttScore() {
-            try {
-                return JSON.parse(localStorage.getItem(TTT_SCORE_KEY)) || { X: 0, O: 0, draw: 0 };
-            } catch (e) {
-                return { X: 0, O: 0, draw: 0 };
-            }
-        }
-
-        function saveTttScore(score) {
-            localStorage.setItem(TTT_SCORE_KEY, JSON.stringify(score));
-        }
-
-        function renderTttScore() {
-            const score = loadTttScore();
-            tttScoreXEl.textContent = score.X;
-            tttScoreOEl.textContent = score.O;
-            tttScoreDrawEl.textContent = score.draw;
-        }
-
-        function buildTttBoard() {
+        function tttBuildBoard() {
             tttBoardEl.innerHTML = '';
-            for (let i = 0; i < 9; i++) {
+            tttBoard.forEach((val, i) => {
                 const cell = document.createElement('div');
                 cell.className = 'ttt-cell';
                 cell.dataset.index = i;
-                cell.addEventListener('click', () => handleTttMove(i));
+                cell.addEventListener('click', () => tttHandleCellClick(i));
                 tttBoardEl.appendChild(cell);
-            }
+            });
         }
 
-        function checkTttWinner() {
-            for (const line of WIN_LINES) {
+        function tttHandleCellClick(index) {
+            if (tttGameOver || tttBoard[index]) return;
+
+            tttBoard[index] = tttCurrentPlayer;
+            tttRenderCell(index);
+
+            const winResult = tttCheckWinner();
+            if (winResult) {
+                tttEndGame(winResult);
+                return;
+            }
+
+            if (tttBoard.every(c => c !== null)) {
+                tttEndGame({ draw: true });
+                return;
+            }
+
+            tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
+            tttStatus.textContent = 'Spieler ' + tttCurrentPlayer + ' ist am Zug';
+        }
+
+        function tttRenderCell(index) {
+            const cellEl = tttBoardEl.children[index];
+            const value = tttBoard[index];
+            cellEl.classList.add('filled', value === 'X' ? 'x' : 'o');
+            cellEl.innerHTML = '<span>' + value + '</span>';
+            cellEl.classList.add('just-placed');
+        }
+
+        function tttCheckWinner() {
+            for (const line of TTT_WIN_LINES) {
                 const [a, b, c] = line;
                 if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
                     return { winner: tttBoard[a], line };
                 }
             }
-            if (tttBoard.every(cell => cell !== null)) {
-                return { winner: 'draw', line: [] };
-            }
             return null;
         }
 
-        function handleTttMove(index) {
-            if (tttGameOver || tttBoard[index]) return;
+        function tttEndGame(result) {
+            tttGameOver = true;
 
-            tttBoard[index] = tttCurrentPlayer;
-            const cells = tttBoardEl.children;
-            cells[index].textContent = tttCurrentPlayer;
-            cells[index].classList.add('filled', tttCurrentPlayer.toLowerCase());
-
-            const result = checkTttWinner();
-
-            if (result) {
-                tttGameOver = true;
-                const score = loadTttScore();
-
-                if (result.winner === 'draw') {
-                    tttStatusEl.textContent = 'Unentschieden!';
-                    score.draw += 1;
-                } else {
-                    tttStatusEl.textContent = 'Spieler ' + result.winner + ' hat gewonnen! 🎉';
-                    score[result.winner] += 1;
-                    result.line.forEach(i => cells[i].classList.add('win'));
-                }
-
-                saveTttScore(score);
-                renderTttScore();
+            if (result.draw) {
+                tttStatus.textContent = 'Unentschieden!';
+                tttScores.draw++;
+                tttScoreDrawEl.textContent = tttScores.draw;
+                tttShowBanner('🤝 Unentschieden!');
                 return;
             }
 
-            tttCurrentPlayer = tttCurrentPlayer === 'X' ? 'O' : 'X';
-            tttStatusEl.textContent = 'Spieler ' + tttCurrentPlayer + ' ist am Zug';
+            const { winner, line } = result;
+            tttStatus.textContent = 'Spieler ' + winner + ' hat gewonnen!';
+            tttScores[winner]++;
+            (winner === 'X' ? tttScoreXEl : tttScoreOEl).textContent = tttScores[winner];
+
+            line.forEach(i => {
+                tttBoardEl.children[i].classList.add('win');
+            });
+
+            tttDrawWinLine(line);
+            tttShowBanner('🎉 Spieler ' + winner + ' gewinnt!');
+            tttLaunchConfetti();
         }
 
-        function resetTttGame() {
+        function tttDrawWinLine(line) {
+            const [a, , c] = line;
+            const cellA = tttBoardEl.children[a].getBoundingClientRect();
+            const cellC = tttBoardEl.children[c].getBoundingClientRect();
+            const wrapRect = tttBoardWrap.getBoundingClientRect();
+
+            const x1 = cellA.left + cellA.width / 2 - wrapRect.left;
+            const y1 = cellA.top + cellA.height / 2 - wrapRect.top;
+            const x2 = cellC.left + cellC.width / 2 - wrapRect.left;
+            const y2 = cellC.top + cellC.height / 2 - wrapRect.top;
+
+            const length = Math.hypot(x2 - x1, y2 - y1);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+            tttWinLine.style.top = y1 + 'px';
+            tttWinLine.style.left = x1 + 'px';
+            tttWinLine.style.transform = `rotate(${angle}deg)`;
+            tttWinLine.style.width = '0px';
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    tttWinLine.style.width = length + 'px';
+                });
+            });
+        }
+
+        function tttShowBanner(text) {
+            tttWinBannerText.textContent = text;
+            tttWinBanner.classList.add('show');
+        }
+
+        function tttHideBanner() {
+            tttWinBanner.classList.remove('show');
+        }
+
+        const TTT_CONFETTI_COLORS = ['#00e5ff', '#ff3b30', '#8b5cf6', '#34d399', '#facc15'];
+
+        function tttLaunchConfetti() {
+            const count = 40;
+            for (let i = 0; i < count; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'ttt-confetti';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.background = TTT_CONFETTI_COLORS[Math.floor(Math.random() * TTT_CONFETTI_COLORS.length)];
+                piece.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                piece.style.animationDelay = (Math.random() * 0.3) + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                document.body.appendChild(piece);
+                setTimeout(() => piece.remove(), 4000);
+            }
+        }
+
+        function tttResetGame() {
             tttBoard = Array(9).fill(null);
             tttCurrentPlayer = 'X';
             tttGameOver = false;
-            tttStatusEl.textContent = 'Spieler X ist am Zug';
-            buildTttBoard();
+            tttStatus.textContent = 'Spieler X ist am Zug';
+            tttWinLine.style.width = '0px';
+            tttHideBanner();
+            tttBuildBoard();
         }
 
-        tttResetBtn.addEventListener('click', resetTttGame);
-
-        buildTttBoard();
-        renderTttScore();
+        tttResetBtn.addEventListener('click', tttResetGame);
+        tttBuildBoard();
     </script>
 </body>
 </html>
